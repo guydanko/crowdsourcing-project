@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+</head>
+
+
+
+<body>
+  <section id="dashboard" class="py-4">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+            {% if user.is_authenticated %}
+                <h2>Welcome {{ user.username }}</h2>
+                <div class="card-body">
+                <!-- Alerts -->
+                {% include 'partials/_alerts.html' %}
+                <form action="{% url 'logout' %}" method="POST" id="logout">
+                    {% csrf_token %}
+                    <input type="hidden">
+                    <input type="submit" value="logout" class="btn btn-secondary btn-block">
+                </form>
+                </div>
+            {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+
+</html>
