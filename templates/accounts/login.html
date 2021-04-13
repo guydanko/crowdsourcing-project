@@ -1,8 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
-
-
-<body>
+{% extends "layout/base.html" %}
+{% block body_block %}
   <section id="login" class="bg-light py-5">
     <div class="container">
       <div class="row">
@@ -14,8 +12,8 @@
             </div>
             <div class="card-body">
                 <!-- Alerts -->
-                {% include 'partials/_alerts.html' %}
-              <form action="{% url 'login' %}" method="POST">
+{#                {% include 'partials/_alerts.html' %}#}
+              <form action="{% url 'accounts:login' %}" method="POST">
                   {% csrf_token %}
 
                 <div class="form-group">
@@ -36,6 +34,4 @@
       </div>
     </div>
   </section>
-</body>
-
-</html>
+{% endblock %}
