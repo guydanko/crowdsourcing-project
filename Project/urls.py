@@ -21,5 +21,6 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('', include('layout.urls')),
     path('admin/', admin.site.urls),
+    path('', include('videos.urls')),
     path('accounts/', include('accounts.urls')),
 ]
