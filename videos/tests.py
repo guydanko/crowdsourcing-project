@@ -17,3 +17,12 @@ class ManualTest(TestCase):
         videos = get_all_videos()
         video1 = videos[0]
         video2 = videos[1]
+        Tagging.objects.create(creator=user1, video=video1, start=datetime.time(0, 5, 45), end=datetime.time(0, 6, 45), description='hello')
+        tagging1 = get_all_taggings_for_video(video1)[0]
+        create_user_rating(user2, tagging1, True)
+        print(tagging1.rating_value)
+        create_user_rating(user2, tagging1, False)
+        print(tagging1.rating_value)
+        print("done")
+
+

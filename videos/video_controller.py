@@ -22,9 +22,10 @@ def remove_user_rating_for_tagging(creator, tagging):
     if user_rating_list:
         user_rating = user_rating_list[0]
         if user_rating.is_upvote:
-            tagging.update(user_rating=tagging.rating_value - 1)
+            tagging.rating_value -= 1
         else:
-            tagging.update(user_rating=tagging.rating_value + 1)
+            tagging.rating_value += 1
+        tagging.save()
         user_rating.delete()
 
 
@@ -35,9 +36,10 @@ def create_tagging():
 
 def create_user_rating(creator, tagging, is_upvote):
     remove_user_rating_for_tagging(creator, tagging)
-    user_rating = UserRating(creator=creator, tagging=tagging)
+    user_rating = UserRating(creator=creator, tagging=tagging, is_upvote=is_upvote)
     if is_upvote:
-        tagging.update(user_rating=tagging.rating_value + 1)
+        tagging.rating_value += 1
     else:
-        tagging.update(user_rating=tagging.rating_value - 1)
+        tagging.rating_value -= 1
+    tagging.save()
     user_rating.save()
