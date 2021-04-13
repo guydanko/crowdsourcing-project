@@ -30,6 +30,7 @@ class TaggingValidator:
             errors.append(f'Time out of range')
         if time_range > MAX_START_TO_END_RANGE:
             errors.append(f'Invalid time range, Maximal valid time range duration is {MAX_START_TO_END_RANGE}')
+        return errors
 
 
 class Tagging(models.Model):
