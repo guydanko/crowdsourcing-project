@@ -16,7 +16,7 @@
                 <div class="card-body">
                 <!-- Alerts -->
                 {% include 'partials/_alerts.html' %}
-                <form action="{% url 'logout' %}" method="POST" id="logout">
+                <form action="{% url 'accounts:logout' %}" method="POST" id="logout">
                     {% csrf_token %}
                     <input type="hidden">
                     <input type="submit" value="logout" class="btn btn-secondary btn-block">
