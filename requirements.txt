@@ -5,3 +5,4 @@ psycopg2==2.8.6
 psycopg2-binary==2.8.6
 pytz==2021.1
 sqlparse==0.4.1
+django-embed-video~=1.4.0

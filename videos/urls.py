@@ -1,8 +1,8 @@
-from .views import video, create_tagging
+from .views import all_videos, video
 from django.urls import path
 
 urlpatterns = [
-    path('videos/', video),
-    path('create_tagging', create_tagging)
+    path('videos/', all_videos),
+    path('videos/<int:identifier>/', video),
 ]
 

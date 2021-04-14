@@ -1,0 +1,65 @@
+<!doctype html>
+{% extends "layout/base.html" %}
+{% load embed_video_tags %}
+{% load custom_tags %}
+{% block body_block %}
+    <div class="container-fluid row justify-content-center">
+        <div class="col-sm-12 col-md-6 video">
+            {% video obj.video %}
+        </div>
+        <div class="col-auto tag-form">
+
+            {% load crispy_forms_filters %}
+            {% load crispy_forms_tags %}
+            <form action="." method="post">
+                {% csrf_token %}
+                {{ form | crispy }}
+                <button type="submit"  class="btn btn-primary" , name="save">Create Tagging</button>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        {% if tags %}
+            <div class="container-fluid col table-responsive">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Start Time</th>
+                        <th scope="col">Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for tag in tags %}
+                        <tr>
+                            <th scope="col">{{ tag.start | get_duration }} </th>
+                            <th scope="col">{{ tag.description }}</th>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="col container justify-content-center">
+                <h1 class="text-center"> No tags exist for this video</h1>
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+{% endblock %}
+
+
+<!-- Optional JavaScript; choose one of the two! -->
+
+<!-- Option 1: Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+        crossorigin="anonymous"></script>
+
+<!-- Option 2: Separate Popper and Bootstrap JS -->
+<!--
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js" integrity="sha384-SR1sx49pcuLnqZUnnPwx6FCym0wLsk5JZuNx2bPPENzswTNFaQU1RDvt3wT4gWFG" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>
+-->

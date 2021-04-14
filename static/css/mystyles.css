@@ -1,7 +1,22 @@
 body {
     padding-top: 65px;
 }
-.navbar-form{
+
+.navbar-form {
     padding-left: 50px;
     height: 10px;
+}
+
+input {
+    max-width: 7em;
+}
+textarea{
+    max-height: 100px;
+}
+.tag-form{
+    padding-right: 50px;
+    padding-left: 50px;
+}
+.table-responsive{
+    padding-top: 50px;
 }
