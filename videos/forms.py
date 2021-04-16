@@ -1,10 +1,9 @@
 from django import forms
 from durationwidget.widgets import TimeDurationWidget
-
 from .models import Tagging
 
 
-class CreateNewTagging(forms.ModelForm):
+class CreateNewForm(forms.ModelForm):
     start = forms.DurationField(widget=TimeDurationWidget(
         show_days=False, show_hours=False, show_minutes=True, show_seconds=True
     ), required=True)
@@ -14,4 +13,4 @@ class CreateNewTagging(forms.ModelForm):
 
     class Meta:
         model = Tagging
-        exclude = ('date_subscribed',)
+        exclude = ('date_subscribed', 'related_video', 'related_user',)
