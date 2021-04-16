@@ -24,4 +24,4 @@ class Tagging(models.Model):
     date_subscribed = models.DateTimeField(default=datetime.now())
     description = models.TextField(max_length=200)
     related_video = models.CharField(max_length=200, default="empty")
-    related_user = models.ForeignKey(User, on_delete=models.CASCADE,default= 00)
+    related_user = models.ForeignKey(User, on_delete=models.CASCADE, default=00)

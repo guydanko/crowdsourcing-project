@@ -2,23 +2,17 @@
 {% extends "layout/base.html" %}
 {% load embed_video_tags %}
 {% load custom_tags %}
+{% load static %}
 {% block body_block %}
     <div class="container-fluid row justify-content-center">
+        <div id="youtube-tracking-script"></div>
         <div class="col-sm-12 col-md-6 video">
-            {% video obj.video %}
-        </div>
-        <div class="col-auto tag-form">
+            <div id="video-youtube">
+                {% video obj.video %}
+            </div>
 
-            {% load crispy_forms_filters %}
-            {% load crispy_forms_tags %}
-            <form action="." method="post">
-                {% csrf_token %}
-                {{ form | crispy }}
-                <button type="submit"  class="btn btn-primary" , name="save">Create Tagging</button>
-            </form>
+
         </div>
-    </div>
-    <div class="row">
         {% if tags %}
             <div class="container-fluid col table-responsive">
                 <table class="table">
@@ -30,9 +24,10 @@
                     </thead>
                     <tbody>
                     {% for tag in tags %}
-                        <tr>
+                        <tr class="clickable" onclick="setToTime('{{ tag.start | get_duration }}')">
                             <th scope="col">{{ tag.start | get_duration }} </th>
                             <th scope="col">{{ tag.description }}</th>
+
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -44,19 +39,36 @@
             </div>
 
         {% endif %}
+    </div>
+    <div class="row justify-content-center">
+        {% if user.is_authenticated %}
+            <h1>Add new tagging: </h1>
+            <div class="col-auto tag-form">
+                {% load crispy_forms_filters %}
+                {% load crispy_forms_tags %}
+                <form action="." method="post">
+                    {% csrf_token %}
+                    {{ form | crispy }}
+                    <button type="submit" class="btn btn-primary" , name="save">Create Tagging</button>
+                </form>
+            </div>
+        {% else %}
+            <h1>Must be logged in to create a tagging</h1>
+        {% endif %}
 
     </div>
-
-
+    <script src="{% static 'js/controlVideo.js' %}"></script>
 {% endblock %}
 
-
-<!-- Optional JavaScript; choose one of the two! -->
 
 <!-- Option 1: Bootstrap Bundle with Popper -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
         crossorigin="anonymous"></script>
+
+
+<!-- Optional JavaScript; choose one of the two! -->
+
 
 <!-- Option 2: Separate Popper and Bootstrap JS -->
 <!--

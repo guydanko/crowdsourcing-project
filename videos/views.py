@@ -28,6 +28,7 @@ def video(request, identifier):
             tag = Tagging.objects.create(related_user=request.user, start=start_time, end=end_time,
                                          description=description, related_video=identifier)
             tag.save()
+            form = CreateNewForm()
             HttpResponseRedirect('')
         else:
             messages.error(request, 'Invalid form')
