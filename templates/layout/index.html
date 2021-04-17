@@ -8,7 +8,7 @@
 
 <div class="container px-4">
     {% for i in obj %}
-        <h1><a class = "btn btn-link" href="{% url 'videos:video' i.id %}" >i.video.name</a></h1>
+        <h1><a class = "btn btn-link" href="{% url 'videos:video' i.id %}" > {{ i.name }}} </a></h1>
         {% video i.video 'small' %}
     {% endfor %}
 </div>
