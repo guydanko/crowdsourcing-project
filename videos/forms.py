@@ -3,7 +3,7 @@ from durationwidget.widgets import TimeDurationWidget
 from .models import Tagging
 
 
-class CreateNewForm(forms.ModelForm):
+class VideoTaggingForm(forms.ModelForm):
     start = forms.DurationField(widget=TimeDurationWidget(
         show_days=False, show_hours=False, show_minutes=True, show_seconds=True
     ), required=True)
