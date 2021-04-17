@@ -10,8 +10,8 @@ from .video_controller import *
 
 
 def video(request, identifier):
-    obj = Video.objects.get(id=identifier)
-    tags = get_all_taggings_for_video(identifier)
+    video = Video.objects.get(id=identifier)
+    tags = get_all_taggings_for_video(video)
     if request.method == 'POST':
         form = VideoTaggingForm(request.POST)
         if form.is_valid():
@@ -19,10 +19,8 @@ def video(request, identifier):
             start_time = form.cleaned_data.get("start")
             end_time = form.cleaned_data.get("end")
             description = form.cleaned_data.get("description")
-            tag = Tagging.objects.create(related_user=request.user, start=start_time, end=end_time,
-                                         description=description, related_video=identifier)
-            tag.save()
+            create_tagging(video, request.user, start_time, end_time, description)
             HttpResponseRedirect('')
         else:
             messages.error(request, 'Invalid form')
-    return render(request, 'videos/video.html', {'obj': obj, 'form': VideoTaggingForm(), 'tags': tags})
+    return render(request, 'videos/video.html', {'obj': video, 'form': VideoTaggingForm(), 'tags': tags})
