@@ -8,11 +8,6 @@ from .video_controller import *
 
 # Create your views here.
 
-def all_videos(request):
-    obj = Video.objects.all()
-    form = VideoTaggingForm()
-    return render(request, 'videos/all_videos.html', {'obj': obj, 'form': form})
-
 
 def video(request, identifier):
     video = Video.objects.get(id=identifier)
