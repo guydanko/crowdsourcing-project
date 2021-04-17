@@ -29,9 +29,10 @@ def remove_user_rating_for_tagging(creator, tagging):
         user_rating.delete()
 
 
-def create_tagging():
-    #TODO Omri
-    pass
+def create_tagging(video, user, start_time, end_time, description):
+    tag = Tagging.objects.create(creator=user, start=start_time, end=end_time,
+                                 description=description, video=video)
+    tag.save()
 
 
 def create_user_rating(creator, tagging, is_upvote):

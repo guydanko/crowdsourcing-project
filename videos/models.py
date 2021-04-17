@@ -29,10 +29,10 @@ class Video(models.Model):
 class Tagging(models.Model):
     creator = models.ForeignKey(User, on_delete=models.CASCADE)
     video = models.ForeignKey(Video, on_delete=models.CASCADE)
-    start = models.TimeField()
-    end = models.TimeField()
-    date_subscribed = models.DateTimeField(default=datetime.datetime.now())
-    description = models.TextField(max_length=50)
+    start = models.TimeField(verbose_name="Start(hh:mm:ss):")
+    end = models.TimeField(verbose_name="End(hh:mm:ss):")
+    date_subscribed = models.DateTimeField(default=datetime.now())
+    description = models.TextField(verbose_name="Subject description:", max_length=50)
     rating_value = models.IntegerField(default=0)
 
 
