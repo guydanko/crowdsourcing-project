@@ -27,9 +27,16 @@ class Video(models.Model):
 
 
 class Tagging(models.Model):
-    start = models.DurationField()
-    end = models.DurationField()
-    date_subscribed = models.DateTimeField(default=datetime.now())
-    description = models.TextField(max_length=200)
-    related_video = models.CharField(max_length=200, default="empty")
-    related_user = models.ForeignKey(User, on_delete=models.CASCADE, default=00)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE)
+    video = models.ForeignKey(Video, on_delete=models.CASCADE)
+    start = models.TimeField()
+    end = models.TimeField()
+    date_subscribed = models.DateTimeField(default=datetime.datetime.now())
+    description = models.TextField(max_length=50)
+    rating_value = models.IntegerField(default=0)
+
+
+class UserRating(models.Model):
+    creator = models.ForeignKey(User, on_delete=models.CASCADE)
+    tagging = models.ForeignKey(Tagging, on_delete=models.CASCADE)
+    is_upvote = models.BooleanField()
