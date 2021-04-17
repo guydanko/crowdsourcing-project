@@ -6,7 +6,7 @@ def get_all_videos():
 
 
 def get_all_taggings_for_video(video):
-    return Tagging.objects.filter(video=video)
+    return Tagging.objects.filter(video=video).order_by('start__hour', 'start__minute', 'start__second')
 
 
 def get_all_ratings_for_tagging(tagging):
