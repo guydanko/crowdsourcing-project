@@ -24,15 +24,15 @@ def seconds_to_time(duration_in_seconds):
 
 
 class Video(models.Model):
-    video = EmbedVideoField()  # it's just the video url
+    video = EmbedVideoField()
     duration = models.TimeField(verbose_name="Duration(hh:mm:ss):")
     transcript = JSONField(blank=True, default="Leave empty")
+    name = models.CharField(blank=True, max_length=500)
 
     def save(self, *args, **kwargs):
         # checks if video has transcript
         try:
-            duration_in_seconds = youtube_dl.YoutubeDL().extract_info(self.video.format(sID=sID))['duration']
-            self.duration = seconds_to_time(duration_in_seconds)
+            # yt api gets the suffix of the video url after the =
             self.transcript = json.dumps(yt.get_transcript(self.video.split('=')[1]))
         except youtube_transcript_api.TranscriptsDisabled:
             raise Exception(f"{self.video} doesn't have transcript continue")
@@ -40,7 +40,15 @@ class Video(models.Model):
         for vid in Video.objects.all():
             if vid.video == self.video:
                 return
+        # if validation passed - save duration and name
+        video_info = youtube_dl.YoutubeDL().extract_info(self.video.format(sID=sID), download=False)
+        self.duration = seconds_to_time(video_info['duration'])
+        self.name = video_info['title']
+
         super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
 
 
 class TaggingValidator:

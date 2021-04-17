@@ -1,4 +1,4 @@
-from videos.models import Video, Tagging, UserRating
+from .models import Video, Tagging, UserRating
 
 
 def get_all_videos():

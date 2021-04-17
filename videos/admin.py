@@ -4,7 +4,7 @@ from .models import Video, Tagging
 
 
 class MyModelAdmin(AdminVideoMixin, admin.ModelAdmin):
-    exclude = ('duration', 'transcript')
+    exclude = ('duration', 'transcript', 'name')
 
 
 admin.site.register(Video, MyModelAdmin)
