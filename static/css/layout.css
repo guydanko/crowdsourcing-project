@@ -1,0 +1,42 @@
+body {
+    padding-top: 65px;
+}
+
+.navbar-form {
+    padding-left: 50px;
+    height: 10px;
+}
+
+.tag-form {
+    padding-right: 50px;
+    padding-left: 50px;
+}
+
+.tag-form input {
+    max-width: 7em;
+}
+
+.tag-form textarea {
+    max-height: 70px;
+}
+
+.table-responsive {
+    padding-top: 10px;
+    max-height: 300px;
+    padding-left: 20px;
+}
+
+.row {
+    padding-top: 10px;
+}
+
+.table tbody tr:hover {
+    background-color: mediumpurple;
+    cursor: pointer;
+}
+
+
+iframe {
+    max-height: 300px;
+    padding-top: 10px;
+}
