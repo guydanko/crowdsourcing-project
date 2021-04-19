@@ -7,9 +7,18 @@ body {
     height: 10px;
 }
 
+#video{
+    padding-bottom: 70px;
+}
+
+
 .tag-form {
     padding-right: 50px;
     padding-left: 50px;
+}
+
+.btn{
+    font-size: large;
 }
 
 .tag-form input {
