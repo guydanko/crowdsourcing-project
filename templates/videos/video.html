@@ -4,17 +4,17 @@
 {% load custom_tags %}
 {% load static %}
 {% block body_block %}
-    <div class="container-fluid row justify-content-center">
-        <div id="youtube-tracking-script"></div>
+    <div class="container-fluid row justify-content-center ">
+        <div id="youtube-tracking-script"> </div>
         <div class="col-sm-12 col-md-6 video">
             <div id="video-youtube">
                 {% video obj.video %}
             </div>
-
-
         </div>
+
         {% if tags %}
-            <div class="container-fluid col table-responsive">
+            <div class="col">
+            <div class="container col table-responsive p-3 border bg-light">
                 <table class="table">
                     <thead>
                     <tr>
@@ -33,6 +33,7 @@
                     </tbody>
                 </table>
             </div>
+            </div>
         {% else %}
             <div class="col container justify-content-center">
                 <h1 class="text-center"> No tags exist for this video</h1>
@@ -40,22 +41,30 @@
 
         {% endif %}
     </div>
-    <div class="row justify-content-center">
-        {% if user.is_authenticated %}
-            <h1>Add new tag: </h1>
-            <div class="col-auto tag-form">
-                {% load crispy_forms_filters %}
-                {% load crispy_forms_tags %}
-                <form action="." method="post">
-                    {% csrf_token %}
-                    {{ form | crispy }}
-                    <button type="submit" class="btn btn-primary" , name="save">Create Tagging</button>
-                </form>
-            </div>
-        {% else %}
-            <h1>Must be logged in to create a tagging</h1>
-        {% endif %}
 
+        <div class="row gx-5">
+            <div class="col">
+                <div class="p-3 border bg text-light"style="background-color: dimgray" ><h5>{{ obj.name}}</h5></div>
+            </div>
+            <div class="col">
+                <div class="p-3 border bg-light">
+                    {% if user.is_authenticated %}
+                        <div class="col-auto tag-form">
+                            <h1>Add new tag: </h1>
+                            {% load crispy_forms_filters %}
+                            {% load crispy_forms_tags %}
+                            <form action="." method="post">
+                                {% csrf_token %}
+                                {{ form | crispy }}
+                                <button type="submit" class="btn btn-primary" , name="save">Create Tagging</button>
+                            </form>
+                        </div>
+                    {% else %}
+                        <h1>Must be logged in to create a tagging</h1>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
     <script src="{% static 'js/controlVideo.js' %}"></script>
 {% endblock %}
