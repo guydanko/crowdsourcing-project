@@ -2,20 +2,16 @@
 {% extends "layout/base.html" %}
 {% load embed_video_tags %}
 {% block body_block %}
-    <div class="container px-4" id = "Home">
-        <h1>Home</h1>
-    </div>
 
-<div class="container px-4">
-<div class="p-3 mb-2 bg-light text-dark">
-    {% for i in obj %}
-        <div class = "container" id="video">
-        <h1><a class = "btn btn-link" href="{% url 'videos:video' i.id %}" > {{ i.name }} </a></h1>
-        {% video i.video 'small' %}
-            <p><span class="badge bg-secondary text-light">{{ i.duration|time:'H:i:s' }}</span></p>
-        </div>
-    {% endfor %}
-</div>
+
+<div class="container px-4 p-3 mb-2 bg-light text-dark">
+        {% for i in obj %}
+                <div class = "container" id="video">
+                    <h1><a class = "btn btn-link" href="{% url 'videos:video' i.id %}" > {{ i.name }} </a></h1>
+                    {% video i.video 'small' %}
+                    <p><span class="badge bg-secondary text-light">{{ i.duration|time:'H:i:s' }}</span></p>
+                </div>
+        {% endfor %}
 </div>
 
 {% endblock %}
