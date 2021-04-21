@@ -19,8 +19,8 @@ setVideoId()
 
 function onYouTubeIframeAPIReady() {
     video = new YT.Player('video-youtube', {
-        height: '352',
-        width: '100%',
+        height: '700',
+        width: '700',
         videoId: youtubeVideoId,
         playerVars: {rel: 0, showinfo: 0},
         events: {

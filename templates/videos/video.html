@@ -6,15 +6,15 @@
 {% block body_block %}
     <div class="container-fluid row justify-content-center ">
         <div id="youtube-tracking-script"> </div>
-        <div class="col-sm-12 col-md-6 video">
+        <div class="container col-5 ">
             <div id="video-youtube">
                 {% video obj.video %}
             </div>
         </div>
 
         {% if tags %}
-            <div class="container col table-responsive p-3 border bg-light">
-                <table class="table">
+            <div class="container col-7 table-responsive border bg-light">
+                <table class="table ">
                     <thead>
                     <tr>
                         <th scope="col">Start Time</th>
@@ -41,12 +41,12 @@
     </div>
 
         <div class="container-fluid row justify-content-center">
-            <div class="container col">
-                <div class="p-3 border bg text-light"style="background-color: dimgray" ><h5>{{ obj.name}}</h5></div>
+            <div class="container col-5 " id="video-name">
+                <div class="p-1 border bg text-light"style="background-color: dimgray" ><h5>{{ obj.name}}</h5></div>
             </div>
             {% if user.is_authenticated %}
-            <div class="container col  p-3 border bg-light">
-                        <div class="col-auto tag-form">
+            <div class="container col-7 border bg-light" id="Add-tag">
+                        <div class="col-auto p-3 tag-form">
                             <h1>Add new tag: </h1>
                             {% load crispy_forms_filters %}
                             {% load crispy_forms_tags %}

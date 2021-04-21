@@ -26,8 +26,9 @@ body {
     width: 50px;
     height: auto;
 }
-#Home{
-    padding-top: 40px;
+#video-name {
+    padding-right: 70px;
+    padding-left: 25px;
 }
 .tag-form input {
     max-width: 7em;
@@ -38,14 +39,11 @@ body {
 }
 
 .table-responsive {
-    padding-top: 10px;
-    max-height: 300px;
-    padding-left: 20px;
+    padding-top: 30px;
+    max-height: 440px;
+
 }
 
-.row {
-    padding-top: 10px;
-}
 
 .table tbody tr:hover {
     background-color: mediumpurple;
@@ -54,6 +52,8 @@ body {
 
 
 iframe {
-    max-height: 300px;
-    padding-top: 10px;
+    max-height: 450px;
+    padding-top: 30px;
+    padding-left: 10px;
+    padding-bottom: 10px;
 }
