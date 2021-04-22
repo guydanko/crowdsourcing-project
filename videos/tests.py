@@ -8,10 +8,8 @@ from django.contrib.auth.models import User
 # Create your tests here.
 class ManualTest(TestCase):
     def test_functionality(self):
-        Video.objects.create(video='https://www.youtube.com/watch?v=NC45TRP4lq0&ab_channel=Vox',
-                             length=datetime.time(0, 33, 45))
-        Video.objects.create(video='https://www.youtube.com/watch?v=0MrgsYswT1c&ab_channel=TheDumbfounds',
-                             length=datetime.time(0, 55, 45))
+        Video.objects.create(video='https://www.youtube.com/watch?v=NC45TRP4lq0&ab_channel=Vox')
+        Video.objects.create(video='https://www.youtube.com/watch?v=0MrgsYswT1c&ab_channel=TheDumbfounds')
         user1 = User.objects.create(username='Mark', password='Zuckerberg')
         user2 = User.objects.create(username="Guy", password='Danko')
         videos = get_all_videos()
@@ -19,9 +17,9 @@ class ManualTest(TestCase):
         video2 = videos[1]
         Tagging.objects.create(creator=user1, video=video1, start=datetime.time(0, 5, 45), end=datetime.time(0, 6, 45), description='hello')
         tagging1 = get_all_taggings_for_video(video1)[0]
-        create_user_rating(user2, tagging1, True)
+        create_user_rating(user1, tagging1, True)
         print(tagging1.rating_value)
-        create_user_rating(user2, tagging1, False)
+        create_user_rating(user1, tagging1, False)
         print(tagging1.rating_value)
         print("done")
 

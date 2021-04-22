@@ -36,11 +36,12 @@ def create_tagging(video, user, start_time, end_time, description):
 
 
 def create_user_rating(creator, tagging, is_upvote):
-    remove_user_rating_for_tagging(creator, tagging)
-    user_rating = UserRating(creator=creator, tagging=tagging, is_upvote=is_upvote)
-    if is_upvote:
-        tagging.rating_value += 1
-    else:
-        tagging.rating_value -= 1
-    tagging.save()
-    user_rating.save()
+    if tagging.creator != creator:
+        remove_user_rating_for_tagging(creator, tagging)
+        user_rating = UserRating(creator=creator, tagging=tagging, is_upvote=is_upvote)
+        if is_upvote:
+            tagging.rating_value += 1
+        else:
+            tagging.rating_value -= 1
+        tagging.save()
+        user_rating.save()
