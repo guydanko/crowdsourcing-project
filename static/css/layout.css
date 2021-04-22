@@ -10,9 +10,14 @@ body {
     font-size: large;
 }
 #video{
-    padding-bottom: 70px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 30px;
 }
-
+#video-column{
+    padding-right: 30px;
+    padding-left: 30px;
+}
 
 .tag-form {
     padding-right: 50px;
@@ -46,14 +51,15 @@ body {
 
 
 .table tbody tr:hover {
-    background-color: mediumpurple;
+    background-color: darkgrey;
     cursor: pointer;
 }
 
 
-iframe {
-    max-height: 450px;
+
+#video-youtube{
     padding-top: 30px;
+    max-height: 450px;
     padding-left: 10px;
     padding-bottom: 10px;
 }
