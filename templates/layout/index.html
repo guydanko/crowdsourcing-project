@@ -4,14 +4,18 @@
 {% block body_block %}
 
 
-<div class="container px-4 p-3 mb-2 bg-light text-dark">
+<div class="container p-2">
+    <div class="row">
         {% for i in obj %}
-                <div class = "container" id="video">
+                <div class = "col-md-6 content-center" id="video">
+                <div class = "bg-light border rounded" id="video-column">
                     <h1><a class = "btn btn-link" href="{% url 'videos:video' i.id %}" > {{ i.name }} </a></h1>
                     {% video i.video 'small' %}
                     <p><span class="badge bg-secondary text-light">{{ i.duration|time:'H:i:s' }}</span></p>
                 </div>
+            </div>
         {% endfor %}
+</div>
 </div>
 
 {% endblock %}
