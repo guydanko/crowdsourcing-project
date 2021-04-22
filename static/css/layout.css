@@ -1,7 +1,10 @@
 body {
     padding-top: 65px;
 }
-
+#logo{
+    width: 50px;
+    height: auto;
+}
 .navbar-form {
     padding-left: 50px;
     height: 10px;
@@ -9,32 +12,25 @@ body {
 .nav-item{
     font-size: large;
 }
-#video{
+#video-column{
     padding-left: 20px;
     padding-right: 20px;
     padding-top: 30px;
 }
-#video-column{
+#video{
     padding-right: 30px;
     padding-left: 30px;
-}
-
-.tag-form {
-    padding-right: 50px;
-    padding-left: 50px;
 }
 
 .btn{
     font-size: large;
 }
-#logo{
-    width: 50px;
-    height: auto;
+.tag-form {
+    padding-right: 50px;
+    padding-left: 50px;
 }
-#video-name {
-    padding-right: 70px;
-    padding-left: 25px;
-}
+
+
 .tag-form input {
     max-width: 7em;
 }
@@ -56,10 +52,16 @@ body {
 }
 
 
-
 #video-youtube{
     padding-top: 30px;
     max-height: 450px;
     padding-left: 10px;
     padding-bottom: 10px;
+}
+#video-name {
+    padding-right: 100px;
+    padding-left: 20px;
+}
+#No-tags{
+    padding-top: 20px;
 }

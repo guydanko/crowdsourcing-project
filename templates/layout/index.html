@@ -3,12 +3,12 @@
 {% load embed_video_tags %}
 {% block body_block %}
 
-
+    {% if user.is_authenticated %}
 <div class="container p-2">
     <div class="row">
         {% for i in obj %}
-                <div class = "col-md-6 content-center" id="video">
-                <div class = "bg-light border rounded" id="video-column">
+                <div class = "col-md-6 content-center" id="video-column">
+                <div class = "bg-light border rounded" id="video">
                     <h1><a class = "btn btn-link" href="{% url 'videos:video' i.id %}" > {{ i.name }} </a></h1>
                     {% video i.video 'small' %}
                     <p><span class="badge bg-secondary text-light">{{ i.duration|time:'H:i:s' }}</span></p>
@@ -18,6 +18,11 @@
 </div>
 </div>
 
+{% else %}
+    <div class="container row justify-content-center p-4">
+        <h1>login to see videos</h1>
+    </div>
+        {% endif %}
 {% endblock %}
 
 
