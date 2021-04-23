@@ -12,15 +12,21 @@ import youtube_dl
 sID = "t99ULJjCsaM"
 
 date = datetime.date(1, 1, 1)
-MAX_START_TO_END_RANGE = dt.combine(date, datetime.time(0, 5, 0)) - \
-                         dt.combine(date, datetime.time(0, 0, 0))
+# MAX_START_TO_END_RANGE = dt.combine(date, datetime.time(0, 5, 0)) - \
+#                          dt.combine(date, datetime.time(0, 0, 0))
 
+MAX_START_TO_END_RANGE = 5 * 60
+MIN_START_TO_END_RANGE = 5
 
 def seconds_to_time(duration_in_seconds):
     hours = duration_in_seconds // 3600
     minutes = (duration_in_seconds % 3600) // 60
     seconds = duration_in_seconds % 60
     return datetime.time(hours, minutes, seconds)
+
+
+def time_to_seconds(time_object):
+    return time_object.hour * 3600 + time_object.minute * 60 + time_object.second
 
 
 class Video(models.Model):
@@ -53,14 +59,20 @@ class Video(models.Model):
 
 class TaggingValidator:
     @classmethod
-    def get_errors(cls, creator, video, start, end, date_subscribed, description, rating_value):
+    def get_errors(cls, creator, video, start, end, description, date_subscribed=None, rating_value=None):
         errors = []
-        time_range = dt.combine(date, start) - dt.combine(date, end)
-        if dt.combine(date, start) < dt.combine(date, dt.time(0, 0, 0)) or \
-                dt.combine(date, end) > dt.combine(date, video.length):
+        start = dt.combine(date, start)
+        end = dt.combine(date, end)
+        start_in_seconds = time_to_seconds(start)
+        end_in_seconds = time_to_seconds(end)
+        time_range_in_seconds = end_in_seconds - start_in_seconds
+        video_length_in_seconds = time_to_seconds(dt.combine(date, video.duration))
+        if start_in_seconds < 0 or end_in_seconds > video_length_in_seconds:
             errors.append(f'Time out of range')
-        if time_range > MAX_START_TO_END_RANGE:
+        if time_range_in_seconds > MAX_START_TO_END_RANGE:
             errors.append(f'Invalid time range, Maximal valid time range duration is {MAX_START_TO_END_RANGE}')
+        if time_range_in_seconds < MIN_START_TO_END_RANGE:
+            errors.append(f'Invalid time range, Minimal valid time range duration is {MIN_START_TO_END_RANGE}')
         return errors
 
 
@@ -72,6 +84,18 @@ class Tagging(models.Model):
     date_subscribed = models.DateTimeField(default=dt.now())
     description = models.TextField(verbose_name="Subject description:", max_length=50)
     rating_value = models.IntegerField(default=0)
+
+
+class UserRatingValidator:
+    @classmethod
+    def get_errors(cls, creator, tagging, is_upvote):
+        errors = []
+        if not tagging.exists():
+            errors.append("Tag doesn't exist")
+            return errors
+        if tagging.creator == creator:
+            errors.append("Creator matches rater")
+            return errors
 
 
 class UserRating(models.Model):

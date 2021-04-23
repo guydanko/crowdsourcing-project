@@ -10,8 +10,8 @@ from .video_controller import *
 
 
 def video(request, identifier):
-    video = Video.objects.get(id=identifier)
-    tags = get_all_taggings_for_video(video)
+    video = get_video_by_id(video_id=identifier)
+    tags = get_all_tags_for_video(video)
     if request.method == 'POST':
         form = VideoTaggingForm(request.POST)
         if form.is_valid():

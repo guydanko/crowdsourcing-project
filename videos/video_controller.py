@@ -1,11 +1,19 @@
-from .models import Video, Tagging, UserRating
+from .models import Video, Tagging, UserRating, TaggingValidator, UserRatingValidator
 
 
 def get_all_videos():
     return Video.objects.all()
 
 
-def get_all_taggings_for_video(video):
+def get_tag_by_id(tag_id):
+    return Tagging.objects.filter(id=tag_id)
+
+
+def get_video_by_id(video_id):
+    return Video.objects.get(id=video_id)
+
+
+def get_all_tags_for_video(video):
     return Tagging.objects.filter(video=video).order_by('start__hour', 'start__minute', 'start__second')
 
 
@@ -30,18 +38,24 @@ def remove_user_rating_for_tagging(creator, tagging):
 
 
 def create_tagging(video, user, start_time, end_time, description):
+    errors = TaggingValidator.get_errors(creator=user, start=start_time, end=end_time, description=description,
+                                         video=video)
+    if errors:
+        return errors
     tag = Tagging.objects.create(creator=user, start=start_time, end=end_time,
                                  description=description, video=video)
     tag.save()
 
 
 def create_user_rating(creator, tagging, is_upvote):
-    if tagging.creator != creator:
-        remove_user_rating_for_tagging(creator, tagging)
-        user_rating = UserRating(creator=creator, tagging=tagging, is_upvote=is_upvote)
-        if is_upvote:
-            tagging.rating_value += 1
-        else:
-            tagging.rating_value -= 1
-        tagging.save()
-        user_rating.save()
+    errors = UserRatingValidator.get_errors(creator, tagging, is_upvote)
+    if errors:
+        return errors
+    remove_user_rating_for_tagging(creator, tagging)
+    user_rating = UserRating(creator=creator, tagging=tagging, is_upvote=is_upvote)
+    if is_upvote:
+        tagging.rating_value += 1
+    else:
+        tagging.rating_value -= 1
+    tagging.save()
+    user_rating.save()
