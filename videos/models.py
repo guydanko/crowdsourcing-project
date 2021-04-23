@@ -90,7 +90,7 @@ class UserRatingValidator:
     @classmethod
     def get_errors(cls, creator, tagging, is_upvote):
         errors = []
-        if not tagging.exists():
+        if not tagging:
             errors.append("Tag doesn't exist")
             return errors
         if tagging.creator == creator:

@@ -5,7 +5,7 @@
 {% load static %}
 {% block body_block %}
     <div class="container-fluid row justify-content-center ">
-        <div id="youtube-tracking-script"> </div>
+        <div id="youtube-tracking-script"></div>
         <div class="container col-md-5">
             <div id="video-youtube">
                 {% video obj.video %}
@@ -19,14 +19,17 @@
                     <tr>
                         <th scope="col">Start Time</th>
                         <th scope="col">Description</th>
+                        <th scope="col">Like</th>
+                        <th scope="col">Dislike</th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for tag in tags %}
-                        <tr class="clickable" onclick="setToTime('{{ tag.start | get_duration }}')">
-                            <th scope="col">{{ tag.start | get_duration }} </th>
+                        <tr >
+                            <td scope="col" class="td" onclick="setToTime('{{ tag.start | get_duration }}')">{{ tag.start | get_duration }} </td>
                             <th scope="col">{{ tag.description }}</th>
-
+                            <td scope="col" class="td" onclick="sendVoteRequest({{ tag.id }}, true)">like</td>
+                            <th scope="col"><button type="submit" class="btn btn-primary"  name="dislike">dislike</button></th>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -40,29 +43,33 @@
         {% endif %}
     </div>
 
-        <div class="container-fluid row ">
-            <div class="container col-md-5 " id="video-name">
-                <div class="p-2 border bg text-light rounded"style="background-color: dimgray" ><h5>{{ obj.name}}</h5></div>
+    <div class="container-fluid row ">
+        <div class="container col-md-5 " id="video-name">
+            <div class="p-2 border bg text-light rounded" style="background-color: dimgray"><h5>{{ obj.name }}</h5>
             </div>
-            {% if user.is_authenticated %}
+        </div>
+        {% if user.is_authenticated %}
             <div class="container col-md-7 border bg-light" id="Add-tag">
-                        <div class="col-auto p-3 tag-form">
-                            <h1>Add new tag: </h1>
-                            {% load crispy_forms_filters %}
-                            {% load crispy_forms_tags %}
-                            <form action="." method="post">
-                                {% csrf_token %}
-                                {{ form | crispy }}
-                                <button type="submit" class="btn btn-primary" , name="save">Create Tagging</button>
-                            </form>
-                        </div>
-                    {% else %}
-                        <h1>Must be logged in to create a tagging</h1>
-                    {% endif %}
-                </div>
+            <div class="col-auto p-3 tag-form">
+                <h1>Add new tag: </h1>
+                {% load crispy_forms_filters %}
+                {% load crispy_forms_tags %}
+                <form action="." method="post">
+                    {% csrf_token %}
+                    {{ form | crispy }}
+                    <button type="submit" class="btn btn-primary" , name="save">Create Tag</button>
+                </form>
             </div>
+        {% else %}
+            <h1>Must be logged in to create a tagging</h1>
+        {% endif %}
+        </div>
     </div>
+    </div>
+    <script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
     <script src="{% static 'js/controlVideo.js' %}"></script>
+    <script src="{% static 'js/tagControl.js' %}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 {% endblock %}
 
 

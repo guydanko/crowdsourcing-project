@@ -6,7 +6,7 @@ def get_all_videos():
 
 
 def get_tag_by_id(tag_id):
-    return Tagging.objects.filter(id=tag_id)
+    return Tagging.objects.get(id=tag_id)
 
 
 def get_video_by_id(video_id):
@@ -50,7 +50,7 @@ def create_tagging(video, user, start_time, end_time, description):
 def create_user_rating(creator, tagging, is_upvote):
     errors = UserRatingValidator.get_errors(creator, tagging, is_upvote)
     if errors:
-        return errors
+        return False
     remove_user_rating_for_tagging(creator, tagging)
     user_rating = UserRating(creator=creator, tagging=tagging, is_upvote=is_upvote)
     if is_upvote:
@@ -59,3 +59,4 @@ def create_user_rating(creator, tagging, is_upvote):
         tagging.rating_value -= 1
     tagging.save()
     user_rating.save()
+    return True
