@@ -17,7 +17,7 @@ def get_all_tags_for_video(video):
     return Tagging.objects.filter(video=video).order_by('start__hour', 'start__minute', 'start__second')
 
 
-def get_all_ratings_for_tagging(tagging):
+def get_all_ratings_for_tag(tagging):
     return UserRating.objects.filter(tagging=tagging)
 
 
@@ -40,7 +40,7 @@ def get_tags_active_for_user(user, tags):
     return user_rating_for_tags
 
 
-def remove_user_rating_for_tagging(creator, tagging):
+def remove_user_rating_for_tag(creator, tagging):
     user_rating_list = get_user_rating_for_tag(creator=creator, tagging=tagging)
     if user_rating_list:
         user_rating = user_rating_list[0]
@@ -66,7 +66,7 @@ def create_user_rating(creator, tagging, is_upvote):
     errors = UserRatingValidator.get_errors(creator, tagging, is_upvote)
     if errors:
         return False
-    remove_user_rating_for_tagging(creator, tagging)
+    remove_user_rating_for_tag(creator, tagging)
     user_rating = UserRating(creator=creator, tagging=tagging, is_upvote=is_upvote)
     if is_upvote:
         tagging.rating_value += 1
