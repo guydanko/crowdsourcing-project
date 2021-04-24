@@ -1,3 +1,9 @@
+.fa-thumbs-down{
+    color: gray;
+}
+.fa-thumbs-up{
+    color: gray;
+}
 .active.fa-thumbs-down{
     color: orangered;
 }
