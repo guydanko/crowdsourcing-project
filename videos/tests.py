@@ -1,6 +1,6 @@
 import datetime
 from django.test import TestCase
-from videos.video_controller import get_all_videos, get_user_rating_for_tagging, get_all_ratings_for_tagging, get_all_tags_for_video, create_user_rating, create_tagging
+from videos.video_controller import get_all_videos, get_user_rating_for_tagging, get_all_ratings_for_tag, get_all_tags_for_video, create_user_rating, create_tagging
 from videos.models import Video, Tagging, UserRating
 from django.contrib.auth.models import User
 
