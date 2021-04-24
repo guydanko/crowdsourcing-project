@@ -27,17 +27,8 @@ def video(request, identifier):
         else:
             messages.error(request, 'Invalid form')
 
-    # TODO generate a list of the user ratings for each tag in the video (if they exist)
-    user_rating_for_tags = []
-    for tag in tags:
-        try:
-            is_upvote = get_user_rating_for_tagging(request.user, tag)[0].is_upvote
-            user_rating_for_tags.append(str(is_upvote))
-        except IndexError:
-            user_rating_for_tags.append("None")
-
     return render(request, 'videos/video.html', {'obj': video, 'form': VideoTaggingForm(), 'tags': tags,
-                                                 'ratings_for_user': user_rating_for_tags})
+                                                 'ratings_for_user': get_tags_active_for_user(request.user, tags)})
 
 
 def vote(request):

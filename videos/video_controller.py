@@ -21,7 +21,7 @@ def get_all_ratings_for_tagging(tagging):
     return UserRating.objects.filter(tagging=tagging)
 
 
-def get_user_rating_for_tagging(creator, tagging):
+def get_user_rating_for_tag(creator, tagging):
     return UserRating.objects.filter(creator=creator, tagging=tagging)
 
 
@@ -29,8 +29,19 @@ def get_rating_by_user_and_video(user, video):
     return UserRating.objects.filter(creator=user, tagging__video=video)
 
 
+def get_tags_active_for_user(user, tags):
+    user_rating_for_tags = []
+    for tag in tags:
+        try:
+            is_upvote = get_user_rating_for_tag(user, tag)[0].is_upvote
+            user_rating_for_tags.append(str(is_upvote))
+        except IndexError:
+            user_rating_for_tags.append("None")
+    return user_rating_for_tags
+
+
 def remove_user_rating_for_tagging(creator, tagging):
-    user_rating_list = get_user_rating_for_tagging(creator=creator, tagging=tagging)
+    user_rating_list = get_user_rating_for_tag(creator=creator, tagging=tagging)
     if user_rating_list:
         user_rating = user_rating_list[0]
         if user_rating.is_upvote:
