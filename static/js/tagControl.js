@@ -2,11 +2,10 @@ function updateTagCount(toClick, toDisable, counter, rating) {
     console.log()
     counter.innerText = rating
     console.log(toClick)
-    if (toClick.classList.contains("active")){
+    if (toClick.classList.contains("active")) {
         toClick.classList.remove("active")
-    }
-    else {
-         toClick.classList.add("active")
+    } else {
+        toClick.classList.add("active")
     }
     toDisable.classList.remove("active")
 }
@@ -18,7 +17,7 @@ function sendVoteRequest(tagId, isUpvote, row) {
     const counter = cols[cols.length - 1]
 
     if (toClick.classList.contains("active")) {
-        isUpvote = !isUpvote
+        isUpvote = "delete"
     }
 
     $.ajax({
@@ -31,13 +30,12 @@ function sendVoteRequest(tagId, isUpvote, row) {
         },
         dataType: 'json',
         complete: function (data) {
-            console.log(Object.keys(data))
-            switch (data.status) {
-                case 200:
-                    updateTagCount(toClick, toDisable, counter, data.responseJSON.tag_rating)
-                    break
-                case 405:
-                    alert("Method Not Allowed")
+            const statusCode = data.status
+            if (statusCode === 200 || statusCode == 201) {
+                updateTagCount(toClick, toDisable, counter, data.responseJSON.tag_rating)
+            }
+            if (statusCode === 405) {
+                alert("Method Not Allowed")
             }
 
         }

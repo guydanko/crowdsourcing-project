@@ -11,7 +11,6 @@ var video;
 
 function setVideoId() {
     const iframe = document.getElementsByTagName('iframe')[0];
-    console.log(iframe)
     youtubeVideoId = iframe['src'].split('/')[4].split("?")[0]
 }
 
