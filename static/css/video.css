@@ -1,0 +1,9 @@
+.active.fa-thumbs-down{
+    color: orangered;
+}
+.active.fa-thumbs-up{
+    color: dodgerblue;
+}
+.counter{
+    width: 10px;
+}
