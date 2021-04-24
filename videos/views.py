@@ -1,4 +1,7 @@
-from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotAllowed
+import json
+
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotAllowed, JsonResponse
 from django.shortcuts import render
 from .models import Video, Tagging
 from django.contrib import messages
@@ -23,7 +26,18 @@ def video(request, identifier):
             return HttpResponseRedirect(request.path_info)
         else:
             messages.error(request, 'Invalid form')
-    return render(request, 'videos/video.html', {'obj': video, 'form': VideoTaggingForm(), 'tags': tags, 'ratings_for_user': get_rating_by_user_and_video(user=request.user, video=video)})
+
+    # TODO generate a list of the user ratings for each tag in the video (if they exist)
+    user_rating_for_tags = []
+    for tag in tags:
+        try:
+            is_upvote = get_user_rating_for_tagging(request.user, tag)[0].is_upvote
+            user_rating_for_tags.append(str(is_upvote))
+        except IndexError:
+            user_rating_for_tags.append("None")
+
+    return render(request, 'videos/video.html', {'obj': video, 'form': VideoTaggingForm(), 'tags': tags,
+                                                 'ratings_for_user': user_rating_for_tags})
 
 
 def vote(request):
@@ -35,9 +49,9 @@ def vote(request):
         else:
             is_upvote = False
         if create_user_rating(request.user, tag, is_upvote):
-            response = HttpResponseRedirect('')
-            response['Location'] = f'/videos/{tag.video.id}'
+            context = {'tag_rating': tag.rating_value}
+            response = JsonResponse(context, status=200)
         else:
-            response = HttpResponseNotAllowed()
-        response.tag_rating = tag.rating_value
+            context = {'tag_rating': tag.rating_value}
+            response = JsonResponse(context, status=405)
         return response

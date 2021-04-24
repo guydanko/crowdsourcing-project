@@ -4,12 +4,16 @@
 {% load custom_tags %}
 {% load static %}
 {% block body_block %}
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <div class="container-fluid row justify-content-center ">
         <div id="youtube-tracking-script"></div>
         <div class="container col-md-5">
             <div id="video-youtube">
                 {% video obj.video %}
             </div>
+
+
         </div>
 
         {% if tags %}
@@ -19,17 +23,36 @@
                     <tr>
                         <th scope="col">Start Time</th>
                         <th scope="col">Description</th>
-                        <th scope="col">Like</th>
-                        <th scope="col">Dislike</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for tag in tags %}
-                        <tr >
-                            <td scope="col" class="td" onclick="setToTime('{{ tag.start | get_duration }}')">{{ tag.start | get_duration }} </td>
+                        <tr id="row-{{ forloop.counter0 }}">
+                            <td scope="col" class="td"
+                                onclick="setToTime('{{ tag.start | get_duration }}')">{{ tag.start | get_duration }} </td>
                             <th scope="col">{{ tag.description }}</th>
-                            <td scope="col" class="td" onclick="sendVoteRequest({{ tag.id }}, true)">like</td>
-                            <th scope="col"><button type="submit" class="btn btn-primary"  name="dislike">dislike</button></th>
+                            <td scope="col" class="td"
+                                onclick="sendVoteRequest({{ tag.id }}, true, {{ forloop.counter0 }})">
+                                {% if ratings_for_user|index:forloop.counter0|equal:"True" %}
+                                    <i class="fa fa-thumbs-up active"></i>
+                                {% else %}
+                                    <i class="fa fa-thumbs-up"></i>
+                                {% endif %}
+                            </td>
+                            <td scope="col" class="td"
+                                onclick="sendVoteRequest({{ tag.id }}, false, {{ forloop.counter0 }})">
+                                {% if ratings_for_user|index:forloop.counter0|equal:"False" %}
+                                    <i class="fa fa-thumbs-down active"></i>
+                                {% else %}
+                                    <i class="fa fa-thumbs-down"></i>
+                                {% endif %}
+
+
+                            </td>
+                            <td scope="col" class="td counter">{{ tag.rating_value }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -70,6 +93,7 @@
     <script src="{% static 'js/controlVideo.js' %}"></script>
     <script src="{% static 'js/tagControl.js' %}"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="{% static "css/video.css" %}">
 {% endblock %}
 
 

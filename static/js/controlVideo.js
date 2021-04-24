@@ -1,5 +1,5 @@
-console.log('what')
-var youtubeVideoId = 'u3A7bmEOtaU'; // replace with your own video id
+
+var youtubeVideoId; // replace with your own video id
 
 var tag = document.createElement('script');
 tag.src = "https://www.youtube.com/iframe_api";
@@ -46,10 +46,10 @@ function playVideo() {
 }
 
 function setToTime(duration) {
-    console.log(typeof (duration));
-    durations = duration.split(':');
-    const minutes = parseInt(durations[0])
-    const seconds = parseInt(durations[1])
-    const total_seconds = minutes*60 + seconds
+    const durations = duration.split(':');
+    const hours = parseInt(durations[0]);
+    const minutes = parseInt(durations[1]);
+    const seconds = parseInt(durations[2]);
+    const total_seconds = (hours * 3600) + (minutes * 60) + (seconds);
     video.seekTo(total_seconds, true);
 }
