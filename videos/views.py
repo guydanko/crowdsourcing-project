@@ -23,7 +23,7 @@ def video(request, identifier):
             return HttpResponseRedirect(request.path_info)
         else:
             messages.error(request, 'Invalid form')
-    return render(request, 'videos/video.html', {'obj': video, 'form': VideoTaggingForm(), 'tags': tags})
+    return render(request, 'videos/video.html', {'obj': video, 'form': VideoTaggingForm(), 'tags': tags, 'ratings_for_user': get_rating_by_user_and_video(user=request.user, video=video)})
 
 
 def vote(request):
@@ -39,4 +39,5 @@ def vote(request):
             response['Location'] = f'/videos/{tag.video.id}'
         else:
             response = HttpResponseNotAllowed()
+        response.tag_rating = tag.rating_value
         return response

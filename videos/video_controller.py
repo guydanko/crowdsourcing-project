@@ -25,6 +25,10 @@ def get_user_rating_for_tagging(creator, tagging):
     return UserRating.objects.filter(creator=creator, tagging=tagging)
 
 
+def get_rating_by_user_and_video(user, video):
+    return UserRating.objects.filter(creator=user, tagging__video=video)
+
+
 def remove_user_rating_for_tagging(creator, tagging):
     user_rating_list = get_user_rating_for_tagging(creator=creator, tagging=tagging)
     if user_rating_list:
