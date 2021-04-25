@@ -6,17 +6,17 @@
 {% block body_block %}
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <div class="container-fluid row justify-content-center ">
+    <div class="container-fluid row justify-content-center p-4" >
         <div id="youtube-tracking-script"></div>
-        <div class="container col-md-5">
+        <div class="container col-md-6" id="video-container">
             <div id="video-youtube">
                 {% video obj.video %}
             </div>
         </div>
 
         {% if tags %}
-            <div class="container col-md-7 table-responsive border bg-light">
-                <table class="table">
+            <div class="container col-md-5 table-responsive">
+                <table class="table border rounded bg-light">
                     <thead>
                     <tr>
                         <th scope="col">Start Time</th>
@@ -57,7 +57,7 @@
                 </table>
             </div>
         {% else %}
-            <div class="col container justify-content-center">
+            <div class="col-5 container " id="No-tags">
                 <h1 class="text-center"> No tags exist for this video</h1>
             </div>
 
@@ -68,9 +68,9 @@
             <div class="container col-md-6 " id="video-name">
                 <div class="p-2 border bg text-light rounded"style="background-color: dimgray" ><h5>{{ obj.name}}</h5></div>
             </div>
-        </div>
+
         {% if user.is_authenticated %}
-            <div class="container col-md-7 border bg-light" id="Add-tag">
+            <div class="container col-md-5 border rounded bg-light" id="Add-tag">
             <div class="col-auto p-3 tag-form">
                 <h1>Add new tag: </h1>
                 {% load crispy_forms_filters %}

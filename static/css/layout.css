@@ -40,7 +40,7 @@ body {
 }
 
 .table-responsive {
-    padding-top: 30px;
+    padding-top: 10px;
     max-height: 440px;
 
 }
@@ -49,18 +49,15 @@ body {
 .table tbody tr:hover {
     background-color: darkgrey;
     cursor: pointer;
+    ;
 }
 
-
 #video-youtube{
-    padding-top: 30px;
+    padding-top: 10px;
     max-height: 450px;
-    padding-left: 10px;
-    padding-bottom: 10px;
 }
 #video-name {
     padding-right: 100px;
-    padding-left: 20px;
 }
 #No-tags{
     padding-top: 20px;
