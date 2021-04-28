@@ -4,24 +4,39 @@
 {% block body_block %}
 
     {% if user.is_authenticated %}
-<div class="container p-2">
+                <body  class="home">
+<div class="container p-4 bg-white">
     <div class="row">
         {% for i in obj %}
                 <div class = "col-md-6 content-center" id="video-column">
                 <div class = "bg-light border rounded" id="video">
                     <h1><a class = "btn btn-link" href="{% url 'videos:video' i.id %}" > {{ i.name }} </a></h1>
-                    {% video i.video 'small' %}
+                    <div class="video-responsive">
+                        {% video i.video 'small' %}
+                    </div>
                     <p><span class="badge bg-secondary text-light">{{ i.duration|time:'H:i:s' }}</span></p>
                 </div>
             </div>
         {% endfor %}
 </div>
 </div>
+                </body>
 
 {% else %}
-    <div class="container row justify-content-center p-4">
-        <h1>login to see videos</h1>
+        <body  class="home">
+    <div class="container justify-content-center" id="heading-home" >
+        <div class="p-2">
+        <h1 >Welcome to TAGV</h1>
+        <p>A platform to watch videos, and more.</p>
+        <p>TAGV allows you to put time stamps in your videos, for your use, and to help other viewers.</p>
+            </div>
+        <div class="p-2">
+        <h4 id="login">Please login to watch videos, or register to create an account.</h4>
+        <a class="btn btn-secondary"href="{% url 'accounts:login' %}" role="button">Login</a>
+        <a class="btn btn-secondary" href="{% url 'accounts:register' %}" role="button">Register</a>
+            </div>
     </div>
+        </body>
         {% endif %}
 {% endblock %}
 
