@@ -12,9 +12,8 @@ var video;
 function setVideoId() {
     const iframe = document.getElementsByTagName('iframe')[0];
     youtubeVideoId = iframe['src'].split('/')[4].split("?")[0]
+    console.log(youtubeVideoId)
 }
-
-setVideoId()
 
 function onYouTubeIframeAPIReady() {
     video = new YT.Player('video-youtube', {
@@ -50,5 +49,8 @@ function setToTime(duration) {
     const minutes = parseInt(durations[1]);
     const seconds = parseInt(durations[2]);
     const total_seconds = (hours * 3600) + (minutes * 60) + (seconds);
+    var duration = video.getDuration();
     video.seekTo(total_seconds, true);
 }
+
+setVideoId()

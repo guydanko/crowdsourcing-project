@@ -1,9 +1,8 @@
 import json
 
-from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotAllowed, JsonResponse
 from django.shortcuts import render
-from .models import Video, Tagging
+from django.core import serializers
 from django.contrib import messages
 from .forms import VideoTaggingForm
 from .video_controller import *
@@ -50,3 +49,17 @@ def vote(request):
         else:
             status_code = 405
         return JsonResponse({'tag_rating': tag.rating_value}, status=status_code)
+
+
+def search_videos(request):
+    if request.method == 'GET':
+        search_term = request.GET['search_term']
+        videos = get_videos_containing_name(search_term)
+
+        if videos:
+            status_code = 200
+        else:
+            status_code = 204
+
+        json_videos = serializers.serialize('json', videos)
+        return JsonResponse({'videos': json_videos}, status=status_code)

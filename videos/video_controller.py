@@ -13,6 +13,10 @@ def get_video_by_id(video_id):
     return Video.objects.get(id=video_id)
 
 
+def get_videos_containing_name(name):
+    return Video.objects.filter(name__icontains=name)
+
+
 def get_all_tags_for_video(video):
     return Tagging.objects.filter(video=video).order_by('start__hour', 'start__minute', 'start__second')
 
