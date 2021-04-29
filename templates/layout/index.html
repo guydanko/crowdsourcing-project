@@ -9,7 +9,7 @@
         {% for i in obj %}
                 <div class = "col-md-6 content-center" id="video-column">
                 <div class = "bg-light border rounded" id="video">
-                    <h1><a class = "btn btn-link" href="{% url 'videos:video' i.id %}" > {{ i.name }} </a></h1>
+                    <h1><a class = "btn btn-link" href="{% url 'videos:video' identifier=i.id%}" > {{ i.name }} </a></h1>
                     {% video i.video 'small' %}
                     <p><span class="badge bg-secondary text-light">{{ i.duration|time:'H:i:s' }}</span></p>
                 </div>

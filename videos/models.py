@@ -102,3 +102,23 @@ class UserRating(models.Model):
     creator = models.ForeignKey(User, on_delete=models.CASCADE)
     tagging = models.ForeignKey(Tagging, on_delete=models.CASCADE)
     is_upvote = models.BooleanField()
+
+
+class Comment(models.Model):
+    video = models.ForeignKey(Video, on_delete=models.CASCADE)
+    tag = models.ForeignKey(Tagging, related_name='comments', on_delete=models.CASCADE)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE)
+    body = models.TextField(max_length=50)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    # manually deactivate inappropriate comments from admin site
+    active = models.BooleanField(default=True)
+    parent = models.ForeignKey('self', null=True, blank=True, related_name='replies', on_delete=models.CASCADE)
+
+
+    class Meta:
+        ordering = ('created',)
+
+    def __str__(self):
+        # TODO Need to get user name instead of creator creator object which is user object
+        return 'Comment by {}'.format(self.creator)

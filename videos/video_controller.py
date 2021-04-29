@@ -1,4 +1,5 @@
-from .models import Video, Tagging, UserRating, TaggingValidator, UserRatingValidator
+from .models import Video, Tagging, UserRating, TaggingValidator, UserRatingValidator, Comment
+from typing import List
 
 
 def get_all_videos():
@@ -75,3 +76,10 @@ def create_user_rating(creator, tagging, is_upvote):
     tagging.save()
     user_rating.save()
     return True
+
+
+# Comments controllers
+
+def get_all_comments_for_tag(tag) -> List[Comment]:
+    return Comment.objects.filter(tag=tag)
+

@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotAllow
 from django.shortcuts import render
 from .models import Video, Tagging
 from django.contrib import messages
-from .forms import VideoTaggingForm
+from .forms import VideoTaggingForm, CommentForm
 from .video_controller import *
 
 
@@ -13,8 +13,8 @@ from .video_controller import *
 
 
 def video(request, identifier):
-    video = get_video_by_id(video_id=identifier)
-    tags = get_all_tags_for_video(video)
+    related_video = get_video_by_id(video_id=identifier)
+    tags = get_all_tags_for_video(related_video)
     if request.method == 'POST':
         form = VideoTaggingForm(request.POST)
         if form.is_valid():
@@ -22,12 +22,12 @@ def video(request, identifier):
             start_time = form.cleaned_data.get("start")
             end_time = form.cleaned_data.get("end")
             description = form.cleaned_data.get("description")
-            create_tagging(video, request.user, start_time, end_time, description)
+            create_tagging(related_video, request.user, start_time, end_time, description)
             return HttpResponseRedirect(request.path_info)
         else:
             messages.error(request, 'Invalid form')
 
-    return render(request, 'videos/video.html', {'obj': video, 'form': VideoTaggingForm(), 'tags': tags,
+    return render(request, 'videos/video.html', {'obj': related_video, 'form': VideoTaggingForm(), 'tags': tags,
                                                  'ratings_for_user': get_tags_active_for_user(request.user, tags)})
 
 
@@ -50,3 +50,29 @@ def vote(request):
         else:
             status_code = 405
         return JsonResponse({'tag_rating': tag.rating_value}, status=status_code)
+
+
+def comment(request, video_id, tag_id):
+    related_video = get_video_by_id(video_id)
+    tag = get_tag_by_id(tag_id)
+    if request.method == "POST":
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            # if parent_id exists, then it's a reply
+            try:
+                parent_id = int(request.POST.get('parent_id'))
+            except KeyError:
+                parent_id = None
+            if parent_id:
+                parent_obj = Comment.objects.get(id=parent_id)
+                if parent_obj:
+                    replay_comment = comment_form.save(commit=False)
+                    replay_comment.parent = parent_obj
+            new_comment = comment_form.save(commit=False)
+            new_comment.tag = tag, new_comment.video = related_video
+            new_comment.save()
+    comments = get_all_comments_for_tag(tag)
+    context = {'obj': related_video, 'comment_form': CommentForm(),
+               'comments': comments}
+    # need to edit from where it renders
+    return render(request, 'videos/video.html', context)

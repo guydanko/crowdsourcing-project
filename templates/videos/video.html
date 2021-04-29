@@ -32,6 +32,10 @@
                             <td scope="col" class="td"
                                 onclick="setToTime('{{ tag.start | get_duration }}')">{{ tag.start | get_duration }} </td>
                             <th scope="col">{{ tag.description }}</th>
+                        <!-- In Order to get the tag_id when user wants to view a comment -->
+                            <th scope="col">
+                                <h1><a class = "btn btn-link" href="{% url 'videos:comment' video_id=obj.id tag_id=tag.pk%}" > View Comments </a></h1>
+                            </th>
                             <td scope="col" class="td"
                                 onclick="sendVoteRequest({{ tag.id }}, true, {{ forloop.counter0 }})">
                                 {% if ratings_for_user|index:forloop.counter0|equal:"True" %}
@@ -47,8 +51,6 @@
                                 {% else %}
                                     <i class="fa fa-thumbs-down"></i>
                                 {% endif %}
-
-
                             </td>
                             <td scope="col" class="td counter">{{ tag.rating_value }}</td>
                         </tr>
