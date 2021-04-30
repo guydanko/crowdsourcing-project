@@ -80,7 +80,7 @@ def create_comment(request):
             messages.error(request, 'Comment text exceeded maximum length')
         else:
             comment = Comment(body=comment_body, tag=tag, video=tag.video,
-                              create=User.objects.get(id=request.user))
+                              create=User.objects.get(id=request.user.id))
             parent_id = int(data['parent_id']) if 'parent_id' in data else None
             if parent_id:
                 # reply comment
@@ -100,11 +100,13 @@ def delete_comment(request):
     if request.method == 'POST':
         tag = get_tag_by_id(request.POST['tag_id'])
         comment = get_comment_by_id(request.POST['comment_id'])
-        try:
-            comment.delete()
-        except AttributeError:
-            messages.warning(request, 'The comment could not be deleted.')
-
+        if comment.creator.id == request.user.id:
+            try:
+                comment.delete()
+            except AttributeError:
+                messages.warning(request, 'The comment could not be deleted.')
+        else:
+            messages.warning(request, 'Only comment owner can delete')
         comments, status_code = get_serialized_comments_for_tag(tag)
         return JsonResponse({'comments_list': comments}, status=status_code)
 
