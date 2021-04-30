@@ -4,12 +4,13 @@ from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotAllow
 from django.shortcuts import render
 from django.core import serializers
 from django.contrib import messages
+from rest_framework.decorators import api_view
 from .forms import VideoTaggingForm
 from .video_controller import *
+from django.views.decorators.csrf import csrf_exempt
 
 
 # Create your views here.
-
 
 def video(request, identifier):
     video = get_video_by_id(video_id=identifier)
@@ -32,6 +33,7 @@ def video(request, identifier):
 
 def vote(request):
     if request.method == 'POST':
+        print(request.POST)
         tag = get_tag_by_id(request.POST['tag_id'])
         is_upvote_string = request.POST['is_upvote']
 
@@ -63,3 +65,56 @@ def search_videos(request):
 
         json_videos = serializers.serialize('json', videos)
         return JsonResponse({'videos': json_videos}, status=status_code)
+
+
+# -------------------------- Comment views -------------------------------------
+
+@csrf_exempt
+@api_view(['POST'])
+def create_comment(request):
+    if request.method == 'POST':
+        data = request.POST
+        tag = get_tag_by_id(data['tag_id'])
+        comment_body = data['body']
+        if len(comment_body) > 400:
+            messages.error(request, 'Comment text exceeded maximum length')
+        else:
+            comment = Comment(body=comment_body, tag=tag, video=tag.video,
+                              create=User.objects.get(id=request.user))
+            parent_id = int(data['parent_id']) if 'parent_id' in data else None
+            if parent_id:
+                # reply comment
+                parent_comment = Comment.objects.get(id=parent_id)
+                comment.parent = parent_comment
+                comment.is_reply = True
+            comment.save()
+            messages.success(request, 'Comment saved successfully')
+
+        comments, status_code = get_serialized_comments_for_tag(tag)
+        return JsonResponse({'comments_list': comments}, status=status_code)
+
+
+@csrf_exempt
+@api_view(['POST'])
+def delete_comment(request):
+    if request.method == 'POST':
+        tag = get_tag_by_id(request.POST['tag_id'])
+        comment = get_comment_by_id(request.POST['comment_id'])
+        try:
+            comment.delete()
+        except AttributeError:
+            messages.warning(request, 'The comment could not be deleted.')
+
+        comments, status_code = get_serialized_comments_for_tag(tag)
+        return JsonResponse({'comments_list': comments}, status=status_code)
+
+
+@csrf_exempt
+@api_view(['POST'])
+def view_comments(request):
+    if request.method == 'POST':
+        tag = get_tag_by_id(request.POST['tag_id'])
+        comments, status_code = get_serialized_comments_for_tag(tag)
+        print('comments are : \n'*10)
+        print(comments)
+        return JsonResponse({'tag_id': tag.id, 'comments_list': comments}, status=status_code)

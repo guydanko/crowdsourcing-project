@@ -18,6 +18,7 @@ date = datetime.date(1, 1, 1)
 MAX_START_TO_END_RANGE = 5 * 60
 MIN_START_TO_END_RANGE = 5
 
+
 def seconds_to_time(duration_in_seconds):
     hours = duration_in_seconds // 3600
     minutes = (duration_in_seconds % 3600) // 60
@@ -85,6 +86,9 @@ class Tagging(models.Model):
     description = models.TextField(verbose_name="Subject description:", max_length=50)
     rating_value = models.IntegerField(default=0)
 
+    def __str__(self):
+        return f"Tagging description - {self.description}"
+
 
 class UserRatingValidator:
     @classmethod
@@ -102,3 +106,20 @@ class UserRating(models.Model):
     creator = models.ForeignKey(User, on_delete=models.CASCADE)
     tagging = models.ForeignKey(Tagging, on_delete=models.CASCADE)
     is_upvote = models.BooleanField()
+
+
+class Comment(models.Model):
+    video = models.ForeignKey(Video, on_delete=models.CASCADE)
+    tag = models.ForeignKey(Tagging, related_name='comments', on_delete=models.CASCADE)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE)
+    body = models.TextField(max_length=50)
+    created = models.DateTimeField(auto_now_add=True)
+    parent = models.ForeignKey('self', null=True, blank=True, related_name='replies', on_delete=models.CASCADE)
+    is_reply = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ('created',)
+
+    def __str__(self):
+        return f'Comment by {self.creator}\n' \
+               f'{self.body}'
