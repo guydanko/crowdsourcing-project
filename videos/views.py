@@ -115,6 +115,4 @@ def view_comments(request):
     if request.method == 'POST':
         tag = get_tag_by_id(request.POST['tag_id'])
         comments, status_code = get_serialized_comments_for_tag(tag)
-        print('comments are : \n'*10)
-        print(comments)
         return JsonResponse({'tag_id': tag.id, 'comments_list': comments}, status=status_code)
