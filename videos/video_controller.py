@@ -1,10 +1,15 @@
 from .models import *
 from typing import List, Dict
 from django.core import serializers
+from videos.tasks import get_transcript_score_async
 
 
 def get_all_videos() -> List[Video]:
     return Video.objects.all()
+
+
+def get_user_by_id(user_id):
+    return User.objects.get(id=user_id)
 
 
 def get_tag_by_id(tag_id) -> Tagging:
@@ -58,14 +63,16 @@ def remove_user_rating_for_tag(creator, tagging) -> None:
         user_rating.delete()
 
 
-def create_tagging(video, user, start_time, end_time, description):
+def create_tag(video, user, start_time, end_time, description):
     errors = TaggingValidator.get_errors(creator=user, start=start_time, end=end_time, description=description,
                                          video=video)
     if errors:
         return errors
-    tag = Tagging.objects.create(creator=user, start=start_time, end=end_time,
-                                 description=description, video=video)
-    tag.save()
+    start = time_to_seconds(start_time)
+    end = time_to_seconds(end_time)
+    # get_transcript_score_async(video.transcript, user.id, start_time, end_time, description, video.id, start, end)  # sync
+
+    get_transcript_score_async.delay(video.transcript, user.id, start_time, end_time, description, video.id, start, end)  # async
 
 
 def create_user_rating(creator, tagging, is_upvote):

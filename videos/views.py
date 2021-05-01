@@ -22,7 +22,7 @@ def video(request, identifier):
             start_time = form.cleaned_data.get("start")
             end_time = form.cleaned_data.get("end")
             description = form.cleaned_data.get("description")
-            create_tagging(video, request.user, start_time, end_time, description)
+            create_tag(video, request.user, start_time, end_time, description)
             return HttpResponseRedirect(request.path_info)
         else:
             messages.error(request, 'Invalid form')

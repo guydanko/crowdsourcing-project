@@ -15,7 +15,7 @@ date = datetime.date(1, 1, 1)
 # MAX_START_TO_END_RANGE = dt.combine(date, datetime.time(0, 5, 0)) - \
 #                          dt.combine(date, datetime.time(0, 0, 0))
 
-MAX_START_TO_END_RANGE = 5 * 60
+MAX_START_TO_END_RANGE = 20 * 60
 MIN_START_TO_END_RANGE = 5
 
 
@@ -85,6 +85,7 @@ class Tagging(models.Model):
     date_subscribed = models.DateTimeField(default=dt.now())
     description = models.TextField(verbose_name="Subject description:", max_length=50)
     rating_value = models.IntegerField(default=0)
+    transcript_score = models.DecimalField(decimal_places=3, max_digits=10)
 
     def __str__(self):
         return f"Tagging description - {self.description}"
