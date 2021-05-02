@@ -35,6 +35,7 @@
                             <td scope="col" class="td"
                                 onclick="setToTime('{{ tag.start | get_duration }}')">{{ tag.start | get_duration }} </td>
                             <th scope="col">{{ tag.description }}</th>
+                        <!-- In Order to get the tag_id when user wants to view a comment -->
                             <td scope="col" class="td"
                                 onclick="sendVoteRequest({{ tag.id }}, true, {{ forloop.counter0 }})">
                                 {% if ratings_for_user|index:forloop.counter0|equal:"True" %}
