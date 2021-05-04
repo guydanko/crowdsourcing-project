@@ -12,7 +12,7 @@ html{
     line-height: normal;
 }
 #logo{
-    width: 50px;
+    width: 130px;
     height: auto;
 }
 #login{
@@ -65,6 +65,21 @@ html{
     table-layout: fixed;
 }
 
+th.like, th.dislike, th.votes{
+    width: 12%;
+}
+
+
+th.creator{
+    width: 24%;
+}
+th.comments, th.time{
+    width: 20%;
+}
+tr:nth-child(even){
+    background-color: #dddddd;
+    border: 5px;
+}
 .table tbody tr:hover {
     background-color: darkgrey;
     cursor: pointer;
