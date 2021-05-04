@@ -19,11 +19,14 @@
                 <table class="table border rounded table-tags">
                     <thead class="table-dark">
                     <tr>
-                        <th scope="col">Start Time</th>
-                        <th scope="col">Description</th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
+                        <th scope="col" class="time">Start Time</th>
+                        <th scope="col" class="creator">Creator</th>
+                        <th scope="col" class="comments">Comments</th>
+                        <th scope="col" class="like">Like</th>
+                        <th scope="col" class="dislike">Dislike</th>
+                        <th scope="col" class="votes">Votes</th>
+
+
                     </tr>
                     </thead>
                     <tbody>
@@ -31,7 +34,11 @@
                         <tr id="row-{{ forloop.counter0 }}">
                             <td scope="col" class="td"
                                 onclick="setToTime('{{ tag.start | get_duration }}')">{{ tag.start | get_duration }} </td>
-                            <th scope="col">{{ tag.description }}</th>
+                            <td scope="col" class="td">{{ tag.creator }}</td>
+                            <td scope="col" class="td">
+{#                            onclick="sendVoteRequest({{ tag.id }}, true, {{ forloop.counter0 }})">#}
+                                View comments
+                            </td>
                             <td scope="col" class="td"
                                 onclick="sendVoteRequest({{ tag.id }}, true, {{ forloop.counter0 }})">
                                 {% if ratings_for_user|index:forloop.counter0|equal:"True" %}
@@ -51,6 +58,15 @@
 
                             </td>
                             <td scope="col" class="td counter">{{ tag.rating_value }}</td>
+
+
+                        </tr>
+
+                        <tr>
+                        <td scope="col" colspan="6" class="td">
+                            <p><b>Description: </b>{{ tag.description }}</p>
+                        </td>
+
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -58,7 +74,7 @@
             </div>
         {% else %}
             <div class="col-5 container " id="No-tags">
-                <h1 class="text-center"> No tags exist for this video</h1>
+                <h1 class="text-center">No tags exist for this video</h1>
             </div>
 
         {% endif %}
