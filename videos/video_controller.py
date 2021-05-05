@@ -2,6 +2,9 @@ from .models import *
 from typing import List, Dict
 from django.core import serializers
 from videos.tasks import get_transcript_score_async
+from videos.tag_similarity import is_similar
+
+SIMILARITY_DELTA = 60
 
 
 def get_all_videos() -> List[Video]:
@@ -26,6 +29,10 @@ def get_videos_containing_name(name) -> List[Video]:
 
 def get_all_tags_for_video(video) -> List[Tagging]:
     return Tagging.objects.filter(video=video).order_by('start__hour', 'start__minute', 'start__second')
+
+
+def get_tags_for_video_in_time_range(video, start_seconds):
+    return Tagging.objects.filter(video=video, start_seconds__range=(start_seconds - SIMILARITY_DELTA, start_seconds + SIMILARITY_DELTA))
 
 
 def get_all_ratings_for_tag(tagging) -> List[UserRating]:
@@ -68,11 +75,17 @@ def create_tag(video, user, start_time, end_time, description):
                                          video=video)
     if errors:
         return errors
-    start = time_to_seconds(start_time)
-    end = time_to_seconds(end_time)
+
+    tags_for_similarity_test = get_tags_for_video_in_time_range(video, time_to_seconds(start_time))
+    for tag in tags_for_similarity_test:
+        if is_similar(description, tag.description):
+            return ['similar to an existing tag']
+    start_seconds = time_to_seconds(start_time)
+    end_seconds = time_to_seconds(end_time)
+
     # get_transcript_score_async(video.transcript, user.id, start_time, end_time, description, video.id, start, end)  # sync
 
-    get_transcript_score_async.delay(video.transcript, user.id, start_time, end_time, description, video.id, start, end)  # async
+    get_transcript_score_async.delay(video.transcript, user.id, start_time, end_time, description, video.id, start_seconds, end_seconds)  # async
 
 
 def create_user_rating(creator, tagging, is_upvote):
