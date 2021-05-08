@@ -1,28 +1,32 @@
 <!DOCTYPE html>
 {% extends "layout/base.html" %}
 {% block body_block %}
-<section id="register" class="bg-light py-5">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6 mx-auto">
+<body class=" home " id="register" >
+        <div class="row p-4 h-auto">
+            <div class="col ">
                 <div class="card">
-                    <div class="card-header bg-primary text-white">
-                        <h4>
-                            <i class="fas fa-user-plus"></i> Register</h4>
+                    <div class="card-header bg-dark text-white">
+                        <h4>Register</h4>
                     </div>
                     <div class="card-body">
                         <!-- Alerts -->
 {#                        {% include 'partials/_alerts.html' %}#}
                         <form action="{% url 'accounts:register' %}" method="POST">
                             {% csrf_token %}
+                            <div class="row">
+                            <div class="col-sm-6">
                             <div class="form-group">
                                 <label for="first_name">First Name</label>
                                 <input type="text" name="first_name" class="form-control" required>
                             </div>
+                            </div>
+                            <div class="col-sm-6">
                             <div class="form-group">
                                 <label for="last_name">Last Name</label>
-                                <input type="text" name="last_name" class="form-control" required>
+                                <input type="text" name="last_name" class="form-control " required>
                             </div>
+                            </div>
+                                </div>
                             <div class="form-group">
                                 <label for="username">Username</label>
                                 <input type="text" name="username" class="form-control" required>
@@ -39,12 +43,11 @@
                                 <label for="password">Confirm Password</label>
                                 <input type="password" name="password2" class="form-control" required>
                             </div>
-                            <input type="submit" value="Register" class="btn btn-secondary btn-block">
+                            <input type="submit" value="Register" class="btn btn-primary btn-block">
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+</body>
 {% endblock %}

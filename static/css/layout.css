@@ -1,11 +1,21 @@
 body {
     padding-top: 65px;
+      height: 100%;
+  margin: 0;
 
 }
 .home{
     background-image: url("../images/cool-background.png");
     background-repeat: no-repeat;
     background-size: cover;
+    justify-content: center;
+     display: flex;
+     height: 100%;
+
+
+}
+.video-page{
+    max-width: 90%
 }
 html{
     font-size: large;
@@ -66,26 +76,31 @@ html{
 }
 
 th.like, th.dislike, th.votes{
-    width: 12%;
+    width: 9%;
 }
-
 
 th.creator{
-    width: 24%;
+    width: 25%;
 }
-th.comments, th.time{
-    width: 20%;
+th.comments{
+    width: 29%;
 }
-tr:nth-child(even){
-    background-color: #dddddd;
-    border: 5px;
+th.time{
+     width: 19%;
+ }
+
+.table tbody:nth-child(even) {
+  background-color: #EBEBEB;
 }
-.table tbody tr:hover {
+.table tbody:hover {
     background-color: darkgrey;
     cursor: pointer;
 
-}
 
+}
+.button-view{
+    font-size: 15px;
+}
 .video-responsive{
     overflow:hidden;
     padding-bottom:61.25%;

@@ -43,3 +43,4 @@ function sendVoteRequest(tagId, isUpvote, row) {
 
 
 }
+
