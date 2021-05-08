@@ -36,18 +36,10 @@
                             <td scope="col" class="td"
                                 onclick="setToTime('{{ tag.start | get_duration }}')">{{ tag.start | get_duration }} </td>
                             <td scope="col" class="td">{{ tag.creator }}</td>
-{#                            <td scope="col" class="td">#}
-{#                                <button type="button " class="btn btn-secondary button-view"#}
-{#                                onclick="sendCommentsRequest({{ tag.id }})">View comments</button>#}
-{#                            </td>#}
-                        <td>
-                            <form action="." method="post">
-                                {% csrf_token %}
-                                <!-- Hidden input to send tag_id -->
-                                <input type="hidden" name="tag_id" value="{{ tag.pk }}">
-                                <input class="btn btn-primary" type="submit" value="View comments">
-                            </form>
-                        </td>
+                            <td scope="col" class="td">
+                                <button type="button " class="btn btn-secondary button-view"
+                                onclick="sendCommentsRequest({{ tag.id }})">View comments</button>
+                            </td>
                             <td scope="col" class="td"
                                 onclick="sendVoteRequest({{ tag.id }}, true, {{ forloop.counter0 }})">
                                 {% if ratings_for_user|index:forloop.counter0|equal:"True" %}
