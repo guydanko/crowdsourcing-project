@@ -4,103 +4,220 @@
 {% load custom_tags %}
 {% load static %}
 {% block body_block %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <div class="container-fluid home ">
-        <div class="container bg-white p-3 video-page">
-            <div class="container-fluid row justify-content-center p-3" >
+    <div class="container-fluid home">
+        <div class="bg-white video-page">
+            <div class="container-fluid row justify-content-center p-2">
                 <div id="youtube-tracking-script"></div>
-                <div class="container col-md-6 ">
+                <div class="container col-md-6 p-2">
+
                     <div class="video-responsive">
-                        {% video obj.video %}
-                    </div>
-                </div>
-
-                {% if tags %}
-                    <div class="container col-md-6 table-responsive">
-                        <table class="table border rounded table-tags">
-                            <thead class="table-dark">
-                            <tr>
-                                <th scope="col" class="time">Start</th>
-                                <th scope="col" class="creator">Creator</th>
-                                <th scope="col" class="comments">Comments</th>
-                                <th scope="col" class="like"></th>
-                                <th scope="col" class="dislike"></th>
-                                <th scope="col" class="votes"></th>
-                            </tr>
-                            </thead>
-
-                            {% for tag in tags %}
-                                <tbody>
-                                <tr  id="row-{{ forloop.counter0 }}">
-                                    <td scope="col" class="td"
-                                        onclick="setToTime('{{ tag.start | get_duration }}')">{{ tag.start | get_duration }} </td>
-                                    <td scope="col" class="td">{{ tag.creator }}</td>
-                                    <td scope="col" class="td">
-                                        <button type="button " class="btn btn-secondary button-view"
-                                                onclick="sendCommentsRequest({{ tag.id }})">View comments</button>
-                                    </td>
-                                    <td scope="col" class="td"
-                                        onclick="sendVoteRequest({{ tag.id }}, true, {{ forloop.counter0 }})">
-                                        {% if ratings_for_user|index:forloop.counter0|equal:"True" %}
-                                            <i class="fa fa-thumbs-up active"></i>
-                                        {% else %}
-                                            <i class="fa fa-thumbs-up"></i>
-                                        {% endif %}
-                                    </td>
-                                    <td scope="col" class="td"
-                                        onclick="sendVoteRequest({{ tag.id }}, false, {{ forloop.counter0 }})">
-                                        {% if ratings_for_user|index:forloop.counter0|equal:"False" %}
-                                            <i class="fa fa-thumbs-down active"></i>
-                                        {% else %}
-                                            <i class="fa fa-thumbs-down"></i>
-                                        {% endif %}
-                                    </td>
-                                    <td scope="col text-center" class="td counter">{{ tag.rating_value }}</td>
-                                </tr>
-
-                                <tr>
-                                    <td scope="col" colspan="6"  class="td">
-                                        <p><b>Description: </b>{{ tag.description }}</p>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                {% else %}
-                    <div class="container col-md-6 ">
-                        <div class="container bg-light border rounded p-2">
-                            <h4>No tags exist for this video</h4>
+                        <div id="video-youtube">
+                            {% video obj.video %}
                         </div>
                     </div>
-                {% endif %}
+
+                </div>
+
+                <div class="container col-md-6 table-responsive">
+                    <table class="table border rounded table-tags">
+                        <thead>
+                        <tr>
+                            {% if show_all_tags == True %}
+                                <td colspan="50%" class="topnav active" id="allTags">
+                                    All tags
+                                </td>
+                                <td colspan="50%" class="topnav" id="myTags">
+                                    My tags
+                                </td>
+                            {% else %}
+                                <td colspan="50%" class="topnav" id="allTags">
+                                    All tags
+                                </td>
+                                <td colspan="50%" class="topnav active" id="myTags">
+                                    My tags
+                                </td>
+                            {% endif %}
+
+                        </tr>
+
+                        </thead>
+                        {% if show_all_tags == True %}
+                            <tbody id="allTagBody" class="active">
+                            {% else %}
+                            <tbody id="allTagBody" class="inactive">
+                        {% endif %}
+                        {% for tag in tags %}
+                            <tr class="outer-row" id="row-{{ forloop.counter0 }}">
+                                <td colspan="100%">
+                                    <table class="table rounded" class="inner-table">
+                                        <tbody>
+
+                                        <tr class="inner-row">
+                                            <td scope="col" class="clickable inner-td set-time-click"
+                                                colspan="60%">{{ tag.start | get_duration }}</td>
+                                            <td scope="col" colspan="30%" class="inner-td">Comments</td>
+                                            <td scope="col" colspan="10%" class="inner-td">
+                                                {% if tag.creator.id == user.id %}
+                                                    <div class="clickable delete-tag" onclick="deleteTag({{ tag.id }})">
+                                                        <i class="bi bi-trash"></i>
+                                                        </a>
+
+                                                    </div>
+                                                {% endif %}
+                                            </td>
+
+
+                                        </tr>
+                                        <tr class="inner-row">
+                                            <td class="inner-td td description" scope="col"
+                                                colspan="100%">{{ tag.description }}</td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <tr class="vote-bar inner-row">
+                                            <td class="inner-td td" scope="col" colspan="70%">Posted
+                                                by : {{ tag.creator }}</td>
+
+                                            <td scope="col" colspan="10%" class="inner-td">
+                                                {% if tag.creator.id != user.id %}
+                                                    {% if ratings_for_user|index:forloop.counter0|equal:"True" %}
+                                                        <div class="clickable"
+                                                             onclick="sendVoteRequest({{ tag.id }}, true,
+                                                                     {{ forloop.counter0 }})">
+                                                            <i class="fa fa-thumbs-up active"></i>
+                                                        </div>
+
+                                                    {% else %}
+                                                        <div class="clickable"
+                                                             onclick="sendVoteRequest({{ tag.id }}, true,
+                                                                     {{ forloop.counter0 }})">
+                                                            <i class="fa fa-thumbs-up"></i>
+                                                        </div>
+                                                    {% endif %}
+                                                {% endif %}
+                                            </td>
+                                            <td scope="col" colspan="10%" class="inner-td">
+                                                {% if tag.creator.id != user.id %}
+                                                    {% if ratings_for_user|index:forloop.counter0|equal:"False" %}
+                                                        <div class="clickable"
+                                                             onclick="sendVoteRequest({{ tag.id }}, false,
+                                                                     {{ forloop.counter0 }})">
+                                                            <i class="fa fa-thumbs-down active"></i>
+                                                        </div>
+                                                    {% else %}
+                                                        <div class="clickable"
+                                                             onclick="sendVoteRequest({{ tag.id }}, false,
+                                                                     {{ forloop.counter0 }})">
+                                                            <i class="fa fa-thumbs-down"></i>
+                                                        </div>
+                                                    {% endif %}
+                                                {% endif %}
+
+
+                                            </td>
+                                            <td scope="col" colspan="10%"
+                                                class="inner-td counter">{{ tag.rating_value }}</td>
+                                        </tr>
+                                        <tr class="inner-row">
+
+
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </td>
+                            </tr>
+
+                        {% endfor %}
+
+
+                        </tbody>
+
+                        {% if show_all_tags == True %}
+                            <tbody id="myTagBody" class="inactive">
+                            {% else %}
+                            <tbody id="myTagBody" class="active">
+                        {% endif %}
+
+                        {% for tag in user_tags %}
+                            <tr class="outer-row" id="row-{{ forloop.counter0 }}">
+                                <td colspan="100%">
+                                    <table class="table rounded" class="inner-table">
+                                        <tbody>
+
+                                        <tr class="inner-row">
+                                            <td scope="col" class="clickable inner-td set-time-click"
+                                                colspan="60%">{{ tag.start | get_duration }}</td>
+                                            <td scope="col" colspan="30%" class="inner-td">Comments</td>
+                                            <td scope="col" colspan="10%" class="inner-td">
+
+                                                <div class="clickable delete-tag" onclick="deleteTag({{ tag.id }})">
+                                                    <i class="bi bi-trash"></i>
+                                                    </a>
+
+                                                </div>
+
+
+                                            </td>
+
+
+                                        </tr>
+                                        <tr class="inner-row">
+                                            <td class="inner-td td description" scope="col"
+                                                colspan="100%">{{ tag.description }}</td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <tr class="vote-bar inner-row">
+                                            <td class="inner-td td" scope="col" colspan="70%">Posted
+                                                by : {{ tag.creator }}</td>
+
+                                            <td scope="col" colspan="10%" class="inner-td">
+                                            </td>
+                                            <td scope="col" colspan="10%" class="inner-td">
+                                            </td>
+                                            <td scope="col" colspan="10%"
+                                                class="inner-td counter">{{ tag.rating_value }}</td>
+                                        </tr>
+                                        <tr class="inner-row">
+
+
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </td>
+                            </tr>
+
+                        {% endfor %}
+
+
+                        </tbody>
+                    </table>
+                </div>
+
+
             </div>
 
-            <div class="container-fluid row justify-content-center p-3">
+            <div class="container-fluid row justify-content-center">
                 <div class="container col-md-6">
-                    <div >
-                    <div class="container-fluid p-2 border bg-light rounded comments" >
+                    <div class="container row-md-6 p-2 border bg-light rounded">
                         <h4>Comments: </h4>
-                        <div id="comments_div"></div>
+                        <p id="comments"></p>
                     </div>
-                    </div>
-                    <div class="parent">
-                    <div class="container-fluid p-2 border bg-light rounded">
-{#                        <div class="comment-form">#}
+                    <div class="container row-md-6 p-2 border bg-light rounded">
+                        {#                        <div class="comment-form">#}
                         <h4>Add new comment: </h4>
                         {% load crispy_forms_filters %}
                         {% load crispy_forms_tags %}
-{#                            {% block content2 %}#}
-{#                            <form action="." method="post">#}
+                        {#                            {% block content2 %}#}
+                        {#                            <form action="." method="post">#}
                         {% csrf_token %}
-{#                                {{ comment_form|crispy }}#}
-                        <p><button type="submit" class="btn btn-primary" , name="save comment">Create Comment</button></p>
-{#                            </form>#}
-{#                                {% endblock %}#}
+                        {#                                {{ comment_form|crispy }}#}
+                        <button type="submit" class="btn btn-primary" , name="save comment">Create Comment</button>
+                        {#                            </form>#}
+                        {#                                {% endblock %}#}
                     </div>
                 </div>
-                </div>
+
                 {% if user.is_authenticated %}
                     <div class="container col-md-6 border rounded bg-light" id="Add-tag">
                     <div class="col-auto p-2 tag-form">
@@ -119,6 +236,7 @@
                                     </div>
                                 </div>
                                 {{ form.description|as_crispy_field }}
+                                <input id="formShowAllTags" type="hidden" name="showAllTags" value="{{ show_all_tags }}">
                                 <button type="submit" class="btn btn-primary" , name="save">Create Tag</button>
                             </form>
                         {% endblock %}
@@ -131,29 +249,16 @@
         </div>
     </div>
 
-
-
-    </body>
-    <script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
-    <script src="{% static 'js/controlVideo.js' %}"></script>
-    <script src="{% static 'js/tagControl.js' %}"></script>
-    <script src="{% static 'js/commentControl.js' %}"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/bootbox/4.4.0/bootbox.min.js"></script>
     <link rel="stylesheet" href="{% static "css/video.css" %}">
+    <script>var video_pk = {{ obj.id }}</script>
+    <script src="{% static 'js/controlVideo.js' %}"></script>
+    <script src="{% static 'js/tagControl.js' %}">
+    </script>
+    <script src="{% static 'js/commentControl.js' %}"></script>
 {% endblock %}
 
 
-<!-- Option 1: Bootstrap Bundle with Popper -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
-        crossorigin="anonymous"></script>
-
-
-<!-- Optional JavaScript; choose one of the two! -->
-
-
-<!-- Option 2: Separate Popper and Bootstrap JS -->
-<!--
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js" integrity="sha384-SR1sx49pcuLnqZUnnPwx6FCym0wLsk5JZuNx2bPPENzswTNFaQU1RDvt3wT4gWFG" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>
--->

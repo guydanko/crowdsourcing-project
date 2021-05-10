@@ -1,15 +1,83 @@
-.fa-thumbs-down{
+.fa-thumbs-down {
     color: gray;
 }
-.fa-thumbs-up{
+
+.fa-thumbs-up {
     color: gray;
 }
-.active.fa-thumbs-down{
+
+.active.fa-thumbs-down {
     color: orangered;
 }
-.active.fa-thumbs-up{
+
+.active.fa-thumbs-up {
     color: dodgerblue;
 }
-.counter{
+
+.counter {
     width: 10px;
+}
+
+.inner-table {
+    border-collapse: collapse;
+    padding-top: 20px;
+    padding-bottom: 0px;
+    background: burlywood;
+    border: aqua;
+    margin: 0;
+}
+tr.inner-row {
+    border: none;
+    line-height: 12px;
+}
+
+td.description {
+    word-wrap: break-word;
+}
+
+td.inner-td {
+    border: none;
+}
+tbody.inner-table-body:hover{
+    cursor: pointer;
+    padding: 0px;
+
+}
+.clickable {
+    cursor: pointer;
+}
+
+.inner-td {
+    font-size: medium;
+}
+.inner-td.clickable:hover {
+    color: cadetblue;
+    font-weight: bold;
+}
+thead{
+    background-color: lavenderblush;
+}
+td.topnav{
+    background-color: lightgrey;
+    font-weight: lighter;
+}
+td.topnav.active{
+    background-color: slategrey;
+    font-weight: bold;
+}
+td.topnav:hover{
+    font-weight: bolder;
+    cursor: pointer;
+}
+#allTagBody.inactive{
+    display: none;
+}
+#myTagBody.inactive{
+    display: none;
+}
+#allTagBody.active{
+    background-color: azure;
+}
+#myTagBody.active{
+    background-color: azure;
 }

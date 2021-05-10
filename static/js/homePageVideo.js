@@ -26,7 +26,8 @@ function get_video_html(video) {
     const iframe = document.createElement("iframe")
     iframe.width = "480"
     iframe.height = "360"
-    iframe.src = video.fields.video.replace("watch?v=","embed/") + "?wmode=opaque"
+    const videoId = video.fields.video.split('&')[0]
+    iframe.src = videoId.replace("watch?v=","embed/") + "?wmode=opaque"
     iframe.loading = "lazy"
     iframe.setAttribute("allowfullscreen", '')
     second_child.appendChild(iframe)

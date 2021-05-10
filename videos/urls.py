@@ -1,4 +1,4 @@
-from .views import video, vote, search_videos, view_comments, create_comment, delete_comment
+from .views import video, vote, search_videos, view_comments, create_comment, delete_comment, delete_tag
 from django.urls import path
 
 app_name = 'videos'
@@ -10,4 +10,5 @@ urlpatterns = [
     path('videos/comments/', view_comments, name='comment'),
     path('videos/create_comment/', create_comment, name='create_comment'),
     path('videos/delete_comment/', delete_comment, name='delete_comment'),
+    path('videos/delete_tag/', delete_tag, name='delete_tag'),
 ]
