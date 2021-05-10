@@ -1,7 +1,7 @@
 body {
     padding-top: 65px;
-      height: 100%;
-  margin: 0;
+    height: 100%;
+    margin: 0;
 
 }
 .home{
@@ -67,12 +67,13 @@ html{
 }
 
 .table-responsive {
-    padding-top: 10px;
     max-height: 440px;
 
 }
 .table{
     table-layout: fixed;
+}
+.table th{
 }
 
 th.like, th.dislike, th.votes{
@@ -95,9 +96,9 @@ th.time{
 .table tbody:hover {
     background-color: darkgrey;
     cursor: pointer;
-
-
 }
+
+
 .button-view{
     font-size: 15px;
 }
@@ -117,6 +118,12 @@ th.time{
 
 }
 
-#No-tags{
-    padding-top: 20px;
+.parent{
+    padding-top: 15px;
+}
+
+.hello{
+    display: none;
+    font-size: large;
+    background-color: #4d90fe;
 }

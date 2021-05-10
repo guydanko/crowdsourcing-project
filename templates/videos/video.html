@@ -4,130 +4,135 @@
 {% load custom_tags %}
 {% load static %}
 {% block body_block %}
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <div class="container-fluid home ">
-    <div class=" bg-white video-page">
-    <div class="container-fluid row justify-content-center  p-3" >
-        <div id="youtube-tracking-script"></div>
-        <div class="container col-md-6 p-2">
-            <div class="video-responsive" >
-                {% video obj.video %}
-            </div>
-        </div>
-
-        {% if tags %}
-            <div class="container col-md-5 table-responsive">
-                <table class="table border rounded table-tags">
-                    <thead class="table-dark">
-                    <tr>
-                        <th scope="col" class="time">Start</th>
-                        <th scope="col" class="creator">Creator</th>
-                        <th scope="col" class="comments">Comments</th>
-                        <th scope="col" class="like"></th>
-                        <th scope="col" class="dislike"></th>
-                        <th scope="col" class="votes"></th>
-                    </tr>
-                    </thead>
-
-                    {% for tag in tags %}
-                        <tbody>
-                        <tr  id="row-{{ forloop.counter0 }}">
-                            <td scope="col" class="td"
-                                onclick="setToTime('{{ tag.start | get_duration }}')">{{ tag.start | get_duration }} </td>
-                            <td scope="col" class="td">{{ tag.creator }}</td>
-                            <td scope="col" class="td">
-                                <button type="button " class="btn btn-secondary button-view"
-                                onclick="sendCommentsRequest({{ tag.id }})">View comments</button>
-                            </td>
-                            <td scope="col" class="td"
-                                onclick="sendVoteRequest({{ tag.id }}, true, {{ forloop.counter0 }})">
-                                {% if ratings_for_user|index:forloop.counter0|equal:"True" %}
-                                    <i class="fa fa-thumbs-up active"></i>
-                                {% else %}
-                                    <i class="fa fa-thumbs-up"></i>
-                                {% endif %}
-                            </td>
-                            <td scope="col" class="td"
-                                onclick="sendVoteRequest({{ tag.id }}, false, {{ forloop.counter0 }})">
-                                {% if ratings_for_user|index:forloop.counter0|equal:"False" %}
-                                    <i class="fa fa-thumbs-down active"></i>
-                                {% else %}
-                                    <i class="fa fa-thumbs-down"></i>
-                                {% endif %}
-                            </td>
-                            <td scope="col text-center" class="td counter">{{ tag.rating_value }}</td>
-                        </tr>
-
-                        <tr>
-                        <td scope="col" colspan="6"  class="td">
-                            <p><b>Description: </b>{{ tag.description }}</p>
-                        </td>
-
-                        </tr>
-                        </tbody>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        {% else %}
-            <div class="col-5 container " id="No-tags">
-                <h1 class="text-center">No tags exist for this video</h1>
-            </div>
-        {% endif %}
-    </div>
-
-        <div class="container-fluid row ">
-            <div class="container col-md-6 ">
-                <div class="container row-md-6 p-2 border bg-light rounded" >
-                    <h4>Comments: </h4>
-                    <p id="comments"></p>
+        <div class="container bg-white p-3 video-page">
+            <div class="container-fluid row justify-content-center p-3" >
+                <div id="youtube-tracking-script"></div>
+                <div class="container col-md-6 ">
+                    <div class="video-responsive">
+                        {% video obj.video %}
+                    </div>
                 </div>
-                <div class="container row-md-6  p-2 border bg-light rounded">
+
+                {% if tags %}
+                    <div class="container col-md-6 table-responsive">
+                        <table class="table border rounded table-tags">
+                            <thead class="table-dark">
+                            <tr>
+                                <th scope="col" class="time">Start</th>
+                                <th scope="col" class="creator">Creator</th>
+                                <th scope="col" class="comments">Comments</th>
+                                <th scope="col" class="like"></th>
+                                <th scope="col" class="dislike"></th>
+                                <th scope="col" class="votes"></th>
+                            </tr>
+                            </thead>
+
+                            {% for tag in tags %}
+                                <tbody>
+                                <tr  id="row-{{ forloop.counter0 }}">
+                                    <td scope="col" class="td"
+                                        onclick="setToTime('{{ tag.start | get_duration }}')">{{ tag.start | get_duration }} </td>
+                                    <td scope="col" class="td">{{ tag.creator }}</td>
+                                    <td scope="col" class="td">
+                                        <button type="button " class="btn btn-secondary button-view"
+                                                onclick="sendCommentsRequest({{ tag.id }})">View comments</button>
+                                    </td>
+                                    <td scope="col" class="td"
+                                        onclick="sendVoteRequest({{ tag.id }}, true, {{ forloop.counter0 }})">
+                                        {% if ratings_for_user|index:forloop.counter0|equal:"True" %}
+                                            <i class="fa fa-thumbs-up active"></i>
+                                        {% else %}
+                                            <i class="fa fa-thumbs-up"></i>
+                                        {% endif %}
+                                    </td>
+                                    <td scope="col" class="td"
+                                        onclick="sendVoteRequest({{ tag.id }}, false, {{ forloop.counter0 }})">
+                                        {% if ratings_for_user|index:forloop.counter0|equal:"False" %}
+                                            <i class="fa fa-thumbs-down active"></i>
+                                        {% else %}
+                                            <i class="fa fa-thumbs-down"></i>
+                                        {% endif %}
+                                    </td>
+                                    <td scope="col text-center" class="td counter">{{ tag.rating_value }}</td>
+                                </tr>
+
+                                <tr>
+                                    <td scope="col" colspan="6"  class="td">
+                                        <p><b>Description: </b>{{ tag.description }}</p>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="container col-md-6 ">
+                        <div class="container bg-light border rounded p-2">
+                            <h4>No tags exist for this video</h4>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="container-fluid row justify-content-center p-3">
+                <div class="container col-md-6">
+                    <div >
+                    <div class="container-fluid p-2 border bg-light rounded comments" >
+                        <h4>Comments: </h4>
+                        <div id="comments_div"></div>
+                    </div>
+                    </div>
+                    <div class="parent">
+                    <div class="container-fluid p-2 border bg-light rounded">
 {#                        <div class="comment-form">#}
                         <h4>Add new comment: </h4>
                         {% load crispy_forms_filters %}
                         {% load crispy_forms_tags %}
 {#                            {% block content2 %}#}
 {#                            <form action="." method="post">#}
-                                {% csrf_token %}
+                        {% csrf_token %}
 {#                                {{ comment_form|crispy }}#}
-                                <button type="submit" class="btn btn-primary" , name="save comment">Create Comment</button>
+                        <p><button type="submit" class="btn btn-primary" , name="save comment">Create Comment</button></p>
 {#                            </form>#}
 {#                                {% endblock %}#}
-                        </div>
-                </div>
-
-        {% if user.is_authenticated %}
-            <div class="container col-md-5 border rounded bg-light" id="Add-tag">
-            <div class="col-auto p-2 tag-form">
-                <h4>Add new tag: </h4>
-                {% load crispy_forms_filters %}
-                {% load crispy_forms_tags %}
-                {% block content %}
-                <form action="." method="post">
-                    {% csrf_token %}
-                    <div class="form-row">
-                        <div class="form-group col-md-6 mb-0">
-                            {{ form.start|as_crispy_field }}
-                        </div>
-                        <div class="form-group col-md-6 mb-0">
-                            {{ form.end|as_crispy_field }}
-                        </div>
                     </div>
-                     {{ form.description|as_crispy_field }}
-
-                    <button type="submit" class="btn btn-primary" , name="save">Create Tag</button>
-                </form>
-            {% endblock %}
+                </div>
+                </div>
+                {% if user.is_authenticated %}
+                    <div class="container col-md-6 border rounded bg-light" id="Add-tag">
+                    <div class="col-auto p-2 tag-form">
+                        <h4>Add new tag: </h4>
+                        {% load crispy_forms_filters %}
+                        {% load crispy_forms_tags %}
+                        {% block content %}
+                            <form action="." method="post">
+                                {% csrf_token %}
+                                <div class="form-row">
+                                    <div class="form-group col-md-6 mb-0">
+                                        {{ form.start|as_crispy_field }}
+                                    </div>
+                                    <div class="form-group col-md-6 mb-0">
+                                        {{ form.end|as_crispy_field }}
+                                    </div>
+                                </div>
+                                {{ form.description|as_crispy_field }}
+                                <button type="submit" class="btn btn-primary" , name="save">Create Tag</button>
+                            </form>
+                        {% endblock %}
+                    </div>
+                {% else %}
+                    <h1>Must be logged in to create a tagging</h1>
+                {% endif %}
+                </div>
             </div>
-        {% else %}
-            <h1>Must be logged in to create a tagging</h1>
-        {% endif %}
         </div>
     </div>
-    </div>
-    </div>
+
+
+
     </body>
     <script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
     <script src="{% static 'js/controlVideo.js' %}"></script>
@@ -136,7 +141,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="stylesheet" href="{% static "css/video.css" %}">
 {% endblock %}
-</div>
+
 
 <!-- Option 1: Bootstrap Bundle with Popper -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
