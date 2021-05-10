@@ -54,8 +54,12 @@
 
                                         <tr class="inner-row">
                                             <td scope="col" class="clickable inner-td set-time-click"
-                                                colspan="60%">{{ tag.start | get_duration }}</td>
-                                            <td scope="col" colspan="30%" class="inner-td">Comments</td>
+                                                colspan="70%">{{ tag.start | get_duration }}</td>
+                                            <td scope="col" colspan="10%" class="inner-td">
+                                            </td>
+                                            <td scope="col" colspan="10%" class="inner-td">
+                                                <i class="far fa-comments"></i>
+                                            </td>
                                             <td scope="col" colspan="10%" class="inner-td">
                                                 {% if tag.creator.id == user.id %}
                                                     <div class="clickable delete-tag" onclick="deleteTag({{ tag.id }})">
@@ -116,7 +120,7 @@
 
                                             </td>
                                             <td scope="col" colspan="10%"
-                                                class="inner-td counter">{{ tag.rating_value }}</td>
+                                                class="inner-td counter"> {{ tag.rating_value }}</td>
                                         </tr>
                                         <tr class="inner-row">
 
@@ -146,17 +150,20 @@
 
                                         <tr class="inner-row">
                                             <td scope="col" class="clickable inner-td set-time-click"
-                                                colspan="60%">{{ tag.start | get_duration }}</td>
-                                            <td scope="col" colspan="30%" class="inner-td">Comments</td>
+                                                colspan="70%">{{ tag.start | get_duration }}</td>
                                             <td scope="col" colspan="10%" class="inner-td">
+                                            </td>
+                                            <td scope="col" colspan="10%" class="inner-td">
+                                                <i class="far fa-comments"></i>
+                                            </td>
+                                            <td scope="col" colspan="10%" class="inner-td">
+                                                {% if tag.creator.id == user.id %}
+                                                    <div class="clickable delete-tag" onclick="deleteTag({{ tag.id }})">
+                                                        <i class="bi bi-trash"></i>
+                                                        </a>
 
-                                                <div class="clickable delete-tag" onclick="deleteTag({{ tag.id }})">
-                                                    <i class="bi bi-trash"></i>
-                                                    </a>
-
-                                                </div>
-
-
+                                                    </div>
+                                                {% endif %}
                                             </td>
 
 
@@ -176,7 +183,7 @@
                                             <td scope="col" colspan="10%" class="inner-td">
                                             </td>
                                             <td scope="col" colspan="10%"
-                                                class="inner-td counter">{{ tag.rating_value }}</td>
+                                                class="inner-td counter"> {{ tag.rating_value }}</td>
                                         </tr>
                                         <tr class="inner-row">
 
@@ -236,7 +243,8 @@
                                     </div>
                                 </div>
                                 {{ form.description|as_crispy_field }}
-                                <input id="formShowAllTags" type="hidden" name="showAllTags" value="{{ show_all_tags }}">
+                                <input id="formShowAllTags" type="hidden" name="showAllTags"
+                                       value="{{ show_all_tags }}">
                                 <button type="submit" class="btn btn-primary" , name="save">Create Tag</button>
                             </form>
                         {% endblock %}
@@ -250,7 +258,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/bootbox/4.4.0/bootbox.min.js"></script>
     <link rel="stylesheet" href="{% static "css/video.css" %}">
