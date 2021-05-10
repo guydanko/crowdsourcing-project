@@ -23,6 +23,15 @@ def get_all_tags_for_video(video) -> List[Tagging]:
     return Tagging.objects.filter(video=video).order_by('start__hour', 'start__minute', 'start__second')
 
 
+def get_all_tags_for_video_by_id(video_id) -> List[Tagging]:
+    return Tagging.objects.filter(video_id=video_id).order_by('start__hour', 'start__minute', 'start__second')
+
+
+def get_all_user_tags_for_video(user_id, video_id) -> List[Tagging]:
+    return Tagging.objects.filter(creator__id=user_id, video_id=video_id).order_by('start__hour',
+                                                                                              'start__minute',
+                                                                                              'start__second')
+
 def get_all_ratings_for_tag(tagging) -> List[UserRating]:
     return UserRating.objects.filter(tagging=tagging)
 
@@ -56,6 +65,10 @@ def remove_user_rating_for_tag(creator, tagging) -> None:
             tagging.rating_value += 1
         tagging.save()
         user_rating.delete()
+
+
+def remove_user_tag(tag_id):
+    get_tag_by_id(tag_id).delete()
 
 
 def create_tagging(video, user, start_time, end_time, description):

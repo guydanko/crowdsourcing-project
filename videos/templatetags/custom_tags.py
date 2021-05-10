@@ -13,7 +13,10 @@ def duration(td):
     if minutes < 10:
         minutes = "0" + str(minutes)
     if hours < 10:
-        hours = "0" + str(hours)
+        if hours == 0:
+            return '{}:{}'.format(minutes, seconds)
+        else:
+            hours = "0" + str(hours)
     return '{}:{}:{}'.format(hours, minutes, seconds)
 
 

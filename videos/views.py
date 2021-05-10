@@ -15,6 +15,14 @@ from django.views.decorators.csrf import csrf_exempt
 def video(request, identifier):
     video = get_video_by_id(video_id=identifier)
     tags = get_all_tags_for_video(video)
+    user_tags = get_all_user_tags_for_video(user_id=request.user.id, video_id=identifier)
+    show_all_tags = True
+    if request.method == 'GET':
+        if 'showAllTags' in request.GET:
+            if request.GET['showAllTags'] == "True":
+                show_all_tags = True
+            else:
+                show_all_tags = False
     if request.method == 'POST':
         form = VideoTaggingForm(request.POST)
         if form.is_valid():
@@ -27,13 +35,14 @@ def video(request, identifier):
         else:
             messages.error(request, 'Invalid form')
 
-    return render(request, 'videos/video.html', {'obj': video, 'form': VideoTaggingForm(), 'tags': tags,
-                                                 'ratings_for_user': get_tags_active_for_user(request.user, tags)})
+    return render(request, 'videos/video.html',
+                  {'obj': video, 'form': VideoTaggingForm(), 'tags': tags, 'user_tags': user_tags,
+                   'show_all_tags': show_all_tags,
+                   'ratings_for_user': get_tags_active_for_user(request.user, tags)})
 
 
 def vote(request):
     if request.method == 'POST':
-        print(request.POST)
         tag = get_tag_by_id(request.POST['tag_id'])
         is_upvote_string = request.POST['is_upvote']
 
@@ -51,6 +60,16 @@ def vote(request):
         else:
             status_code = 405
         return JsonResponse({'tag_rating': tag.rating_value}, status=status_code)
+
+
+def delete_tag(request):
+    if request.method == 'POST':
+        tag_id = request.POST['tag_id']
+
+        remove_user_tag(tag_id=tag_id)
+        status_code = 200
+
+        return JsonResponse({}, status=status_code)
 
 
 def search_videos(request):

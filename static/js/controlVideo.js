@@ -1,4 +1,3 @@
-
 var youtubeVideoId; // replace with your own video id
 
 var tag = document.createElement('script');
@@ -8,6 +7,7 @@ var firstScriptTag = document.getElementById("youtube-tracking-script");
 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
 var video;
+
 
 function setVideoId() {
     const iframe = document.getElementsByTagName('iframe')[0];
@@ -43,14 +43,28 @@ function playVideo() {
     video.playVideo();
 }
 
-function setToTime(duration) {
-    const durations = duration.split(':');
-    const hours = parseInt(durations[0]);
-    const minutes = parseInt(durations[1]);
-    const seconds = parseInt(durations[2]);
-    const total_seconds = (hours * 3600) + (minutes * 60) + (seconds);
-    var duration = video.getDuration();
-    video.seekTo(total_seconds, true);
-}
-
 setVideoId()
+
+var tableBodies = document.getElementsByClassName("set-time-click");
+
+var setDuration = function () {
+    const duration = this.textContent;
+    const durations = duration.split(':');
+    if (durations.length == 3) {
+        var hours = parseInt(durations[0]);
+        var minutes = parseInt(durations[1]);
+        var seconds = parseInt(durations[2]);
+    } else {
+        var hours = 0;
+        var minutes = parseInt(durations[0]);
+        var seconds = parseInt(durations[1]);
+    }
+    const total_seconds = (hours * 3600) + (minutes * 60) + (seconds);
+    const play = video.getDuration();
+    video.seekTo(total_seconds, true);
+
+};
+
+for (var i = 0; i < tableBodies.length; i++) {
+    tableBodies[i].addEventListener('click', setDuration, false);
+}
