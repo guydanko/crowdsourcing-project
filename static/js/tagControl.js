@@ -96,3 +96,4 @@ document.getElementById("allTags").addEventListener("click", function () {
     }
 
 });
+

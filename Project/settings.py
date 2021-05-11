@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'embed_video',
     'crispy_forms',
     'durationwidget',
+    'layout',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -68,8 +69,7 @@ ROOT_URLCONF = 'Project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')]
-        ,
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

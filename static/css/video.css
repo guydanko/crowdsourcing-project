@@ -27,6 +27,7 @@
     border: aqua;
     margin: 0;
 }
+
 tr.inner-row {
     border: none;
     line-height: 12px;
@@ -39,11 +40,13 @@ td.description {
 td.inner-td {
     border: none;
 }
-tbody.inner-table-body:hover{
+
+tbody.inner-table-body:hover {
     cursor: pointer;
     padding: 0px;
 
 }
+
 .clickable {
     cursor: pointer;
 }
@@ -51,34 +54,48 @@ tbody.inner-table-body:hover{
 .inner-td {
     font-size: medium;
 }
+
 .inner-td.clickable:hover {
     color: cadetblue;
     font-weight: bold;
 }
-thead{
+
+thead {
     background-color: lavenderblush;
 }
-td.topnav{
+
+td.topnav {
     background-color: lightgrey;
     font-weight: lighter;
 }
-td.topnav.active{
+
+td.topnav.active {
     background-color: slategrey;
     font-weight: bold;
 }
-td.topnav:hover{
+
+td.topnav:hover {
     font-weight: bolder;
     cursor: pointer;
 }
-#allTagBody.inactive{
+
+#allTagBody.inactive {
     display: none;
 }
-#myTagBody.inactive{
+
+#myTagBody.inactive {
     display: none;
 }
-#allTagBody.active{
+
+#allTagBody.active {
     background-color: azure;
 }
-#myTagBody.active{
+
+#myTagBody.active {
     background-color: azure;
+}
+
+.confirmWidth {
+    width: 550px;
+    margin: 0 auto;
 }

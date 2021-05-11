@@ -1,15 +1,14 @@
 <!doctype html>
 {% extends "layout/base.html" %}
 {% load embed_video_tags %}
-{% load custom_tags %}
 {% load static %}
+{% load custom_tags %}
 {% block body_block %}
     <div class="container-fluid home">
         <div class="bg-white video-page">
             <div class="container-fluid row justify-content-center p-2">
                 <div id="youtube-tracking-script"></div>
                 <div class="container col-md-6 p-2">
-
                     <div class="video-responsive">
                         <div id="video-youtube">
                             {% video obj.video %}
@@ -63,7 +62,7 @@
                                             <td scope="col" colspan="10%" class="inner-td">
                                                 {% if tag.creator.id == user.id %}
                                                     <div class="clickable delete-tag" onclick="deleteTag({{ tag.id }})">
-                                                        <i class="bi bi-trash"></i>
+                                                        <i class="fa fa-trash" aria-hidden="true"></i>
                                                         </a>
 
                                                     </div>
@@ -159,7 +158,7 @@
                                             <td scope="col" colspan="10%" class="inner-td">
                                                 {% if tag.creator.id == user.id %}
                                                     <div class="clickable delete-tag" onclick="deleteTag({{ tag.id }})">
-                                                        <i class="bi bi-trash"></i>
+                                                        <i class="fa fa-trash" aria-hidden="true"></i>
                                                         </a>
 
                                                     </div>
@@ -257,15 +256,15 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
-    <script src="https://cdn.jsdelivr.net/bootbox/4.4.0/bootbox.min.js"></script>
+
     <link rel="stylesheet" href="{% static "css/video.css" %}">
-    <script>var video_pk = {{ obj.id }}</script>
-    <script src="{% static 'js/controlVideo.js' %}"></script>
-    <script src="{% static 'js/tagControl.js' %}">
+    <script type="text/javascript">
+        var video_pk = {{ obj.id }};
     </script>
+    <script src="{% static 'js/controlVideo.js' %}"></script>
+    <script src="{% static 'js/tagControl.js' %}"></script>
     <script src="{% static 'js/commentControl.js' %}"></script>
+
 {% endblock %}
 
 
