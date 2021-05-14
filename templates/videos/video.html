@@ -9,10 +9,11 @@
         <div class="container bg-white p-3 video-page">
             <div class="container-fluid row justify-content-center p-3">
                 <div id="youtube-tracking-script"></div>
-                <div class="container col-md-6 ">
+                <div class="container col-md-6 bg-light border rounded p-3" id="video-page-div">
                     <div class="video-responsive">
                         {% video obj.video %}
                     </div>
+                    <span class="badge bg-secondary text-light">{{ obj.duration|time:'H:i:s' }}</span>
                 </div>
 
                 <div class="container col-md-6 table-responsive">
@@ -209,7 +210,7 @@
                     </div>
                     <div class="parent">
                         <div class="container p-2 border rounded bg-light display-none" id="add-comments">
-                             <form action="{% url 'videos:create_comment' %}" method="POST" id="form-comments">
+                             <form name="form-comments" action="{% url 'videos:create_comment' %}" method="POST" id="form-comments">
                                  {% csrf_token %}
                                  <div class="form-group">
                                      <label for="body"><h4>Add new comment:</h4></label>

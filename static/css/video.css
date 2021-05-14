@@ -1,6 +1,12 @@
 .video-page {
     max-width: 93%
 }
+/*#video-page-div{*/
+/*    padding-bottom: 30px;*/
+/*    padding-top: 20px;*/
+/*    padding-left: 10px;*/
+/*    pa*/
+/*}*/
 .tag-form {
     padding-right: 50px;
     padding-left: 50px;
@@ -16,12 +22,14 @@
 
 .table-responsive {
     max-height: 440px;
+    height: 100%;
 
 }
 
 .table {
     table-layout: fixed;
     margin: 0;
+    height: 100%;
     /*border: cadetblue;*/
 }
 
@@ -126,7 +134,4 @@ td.topnav:hover{
 
 .display-none{
     display: none;
-}
-#comments_table{
-
 }

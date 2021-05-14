@@ -6,17 +6,18 @@ function showComments(comments){
     var table = document.getElementById("comments_table")
     table.innerHTML = "";
 
+    console.log("comments:         "+comments)
     var header = table.createTHead();
     header.style.color = "#FFFFFF";
     var row = header.insertRow(0);
     row.style.backgroundColor ="#000000";
     var cell = row.insertCell(0);
-    cell.innerHTML = "";
-    cell.colSpan = 20
+    cell.innerHTML = "<b>Comments</b>";
+    cell.colSpan = 10
 
     cell = row.insertCell(1);
-    cell.innerHTML = "<b>Comments</b>";
-    cell.colSpan = 80
+    cell.innerHTML = "";
+    cell.colSpan = 90
 
     var tbody = document.createElement("TBODY");
     table.appendChild(tbody);
@@ -28,12 +29,13 @@ function showComments(comments){
             row.id = "comment_header"
             row.style.backgroundColor = "azure"
             cell = row.insertCell(0);
-            cell.colSpan = 20
+            cell.colSpan = 5
             cell.innerHTML = "<i class='showMore fa fa-angle-double-right'></i>"
 
             cell =row.insertCell(1);
             cell.innerHTML = comments[i].fields.body
-            cell.colSpan = 80
+            cell.colSpan = 95
+            cell.style.wordWrap = "break-word"
 
             row = tbody.insertRow(1);
             row.className = "display-none"
@@ -42,11 +44,11 @@ function showComments(comments){
 
             cell = row.insertCell(0);
              cell.innerHTML = ""
-            cell.colSpan = 30
+            cell.colSpan = 20
 
             cell = row.insertCell(1);
              cell.innerHTML = "<b>Replies</b>"
-            cell.colSpan = 70;
+            cell.colSpan = 80;
 
              row = tbody.insertRow(2);
              row.className = "display-none"
@@ -77,11 +79,12 @@ function showComments(comments){
             cell = newrow.insertCell(0);
             cell.innerHTML = ""
             cell.className = "spacer header"
-            cell.colSpan = 30
+            cell.colSpan = 20
 
             cell = newrow.insertCell(1);
             cell.innerHTML = comments[i].fields.body
-            cell.colSpan = 70
+            cell.style.wordWrap = "break-word"
+            cell.colSpan = 80
 
              comment_tr.parentNode.insertBefore(newrow, comment_tr.nextSibling);
 
@@ -148,7 +151,45 @@ function sendCommentsRequest(tagId){
             }
             if (statusCode === 204) {
                 noComments()
-                commentForm()
+                commentForm(data.responseJSON.tag_id)
+            }
+
+        }
+        })
+}
+$(function(){
+  $('form[name=form-comments]').submit(function(){
+    $.post($(this).attr('action'), $(this).serialize(), function(jsonData) {
+        console.log(jsonData.comments_list);
+        showComments(jsonData.comments_list)
+    }, "json");
+    return false;
+  });
+});
+
+function sendAddCommentRequest(){
+
+        $.ajax({
+        url: '/videos/create_comment/',
+        type: 'POST',
+        data: {
+            csrfmiddlewaretoken: window.CSRF_TOKEN,
+            'tag_id': tagId,
+        },
+        dataType: 'json',
+        complete: function (data) {
+            const statusCode = data.status
+            console.log(statusCode)
+            if (statusCode === 200 || statusCode == 201) {
+                 console.log(data.responseJSON.comments_list)
+                var comments = JSON.parse(data.responseJSON.comments_list)
+                showComments(comments)
+                console.log("tag_id: "+data.responseJSON.tag_id)
+                commentForm(data.responseJSON.tag_id)
+            }
+            if (statusCode === 204) {
+                noComments()
+                commentForm(data.responseJSON.tag_id)
             }
 
         }

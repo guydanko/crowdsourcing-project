@@ -99,7 +99,7 @@ def create_comment(request):
             messages.error(request, 'Comment text exceeded maximum length')
         else:
             comment = Comment(body=comment_body, tag=tag, video=tag.video,
-                              create=User.objects.get(id=request.user.id))
+                              creator=request.user)
             parent_id = int(data['parent_id']) if 'parent_id' in data else None
             if parent_id:
                 # reply comment
