@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.core import serializers
 from django.contrib import messages
 from rest_framework.decorators import api_view
-from .forms import VideoTaggingForm, CommentForm
+from .forms import VideoTaggingForm
 from .video_controller import *
 from django.views.decorators.csrf import csrf_exempt
 
@@ -135,15 +135,5 @@ def delete_comment(request):
 def view_comments(request):
     if request.method == 'POST':
         tag = get_tag_by_id(request.POST['tag_id'])
-
-        # print(comments)
-        comment_form = CommentForm(request.POST)
-        if comment_form.is_valid():
-            # create a new model in the data base with the filled form information
-            body = comment_form.cleaned_data.get("body")
-            create_comment(video, request.user, body)
-        else:
-            messages.error(request, 'Invalid form')
-
         comments, status_code = get_serialized_comments_for_tag(tag)
         return JsonResponse(data={'tag_id': tag.id, 'comments_list': comments}, status=status_code)
