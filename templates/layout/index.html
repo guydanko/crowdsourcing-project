@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 {% extends "layout/base.html" %}
 {% load embed_video_tags %}
+{% load static %}
 {% block body_block %}
 
     {% if user.is_authenticated %}
         <body class="home">
         <div class="container p-4 bg-white">
-
             <div class="row" id="video-container">
                 {% for i in obj %}
                     <div class="col-md-6 content-center" id="video-column">
@@ -19,10 +19,7 @@
                         </div>
                     </div>
                 {% endfor %}
-
-
             </div>
-
         </div>
         </body>
 
@@ -44,5 +41,5 @@
         </body>
     {% endif %}
 
-
+    <link rel="stylesheet" href="{% static "css/videos.css" %}">
 {% endblock %}

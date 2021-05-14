@@ -1,3 +1,44 @@
+.video-page {
+    max-width: 93%
+}
+.tag-form {
+    padding-right: 50px;
+    padding-left: 50px;
+}
+
+.tag-form input {
+    max-width: 7em;
+}
+
+.tag-form textarea {
+    max-height: 70px;
+}
+
+.table-responsive {
+    max-height: 440px;
+
+}
+
+.table {
+    table-layout: fixed;
+    margin: 0;
+    /*border: cadetblue;*/
+}
+
+
+.table tr:hover {
+    background-color: #EBEBEB;
+    cursor: pointer;
+}
+
+.parent{
+    padding-top: 15px;
+}
+
+
+
+
+
 .fa-thumbs-down {
     color: gray;
 }
@@ -23,8 +64,8 @@
     border-collapse: collapse;
     padding-top: 20px;
     padding-bottom: 0px;
-    background: burlywood;
-    border: aqua;
+    /*background: burlywood;*/
+    /*border: aqua;*/
     margin: 0;
 }
 tr.inner-row {
@@ -55,16 +96,16 @@ tbody.inner-table-body:hover{
     color: cadetblue;
     font-weight: bold;
 }
-thead{
-    background-color: lavenderblush;
-}
+
 td.topnav{
-    background-color: lightgrey;
+    background-color: black;
     font-weight: lighter;
+    color: white;
 }
 td.topnav.active{
-    background-color: slategrey;
+    background-color: #656565;
     font-weight: bold;
+    color: white;
 }
 td.topnav:hover{
     font-weight: bolder;
@@ -81,4 +122,11 @@ td.topnav:hover{
 }
 #myTagBody.active{
     background-color: azure;
+}
+
+.display-none{
+    display: none;
+}
+#comments_table{
+
 }

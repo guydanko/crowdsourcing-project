@@ -1,8 +1,11 @@
 from django import forms
-from .models import Tagging
+from .models import Tagging, Comment
 
 
 class VideoTaggingForm(forms.ModelForm):
     class Meta:
         model = Tagging
         exclude = ('creator', 'video', 'rating_value', 'date_subscribed')
+
+
+
