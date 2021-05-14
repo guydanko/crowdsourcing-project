@@ -29,6 +29,8 @@ def video(request, identifier):
             description = form.cleaned_data.get("description")
             show_all_tags = form.cleaned_data.get("showAllTags")
             errors = create_tagging(video, request.user, start_time, end_time, description)
+            if len(errors) == 0:
+                messages.success(request, "Tag submitted successfully")
             for error in errors:
                 messages.error(request, error)
             tags = get_all_tags_for_video(video)
