@@ -242,8 +242,7 @@
                                     </div>
                                 </div>
                                 {{ form.description|as_crispy_field }}
-                                <input id="formShowAllTags" type="hidden" name="showAllTags"
-                                       value="{{ show_all_tags }}">
+                                <input type="hidden" name="showAllTags" id="id_showAllTags" value="{{ show_all_tags }}">
                                 <button type="submit" class="btn btn-primary" , name="save">Create Tag</button>
                             </form>
                         {% endblock %}

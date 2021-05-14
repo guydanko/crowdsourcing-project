@@ -27,6 +27,7 @@ def video(request, identifier):
             start_time = form.cleaned_data.get("start")
             end_time = form.cleaned_data.get("end")
             description = form.cleaned_data.get("description")
+            show_all_tags = form.cleaned_data.get("showAllTags")
             errors = create_tagging(video, request.user, start_time, end_time, description)
             for error in errors:
                 messages.error(request, error)
