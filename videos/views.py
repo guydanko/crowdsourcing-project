@@ -1,5 +1,4 @@
 import json
-
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotAllowed, JsonResponse
 from django.shortcuts import render
 from django.core import serializers
@@ -14,7 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 def video(request, identifier):
     video = get_video_by_id(video_id=identifier)
-    tags = get_all_tags_for_video(video)
+    tags = get_tags_for_video(video, request.user.id)
     if request.method == 'POST':
         form = VideoTaggingForm(request.POST)
         if form.is_valid():
@@ -88,6 +87,7 @@ def create_comment(request):
                 comment.parent = parent_comment
                 comment.is_reply = True
             comment.save()
+            tag.amount_of_comments += 1
             messages.success(request, 'Comment saved successfully')
 
         comments, status_code = get_serialized_comments_for_tag(tag)
@@ -103,6 +103,7 @@ def delete_comment(request):
         if comment.creator.id == request.user.id:
             try:
                 comment.delete()
+                tag.amount_of_comments -= 1
             except AttributeError:
                 messages.warning(request, 'The comment could not be deleted.')
         else:

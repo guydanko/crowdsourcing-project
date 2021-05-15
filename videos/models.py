@@ -8,6 +8,7 @@ import datetime
 from django.contrib.auth.models import User
 from youtube_transcript_api import YouTubeTranscriptApi as yt
 import youtube_dl
+from videos.Utils import rating_score_calc, calculate_total_rating_score_for_tag
 
 sID = "t99ULJjCsaM"
 
@@ -17,6 +18,7 @@ date = datetime.date(1, 1, 1)
 
 MAX_START_TO_END_RANGE = 20 * 60
 MIN_START_TO_END_RANGE = 5
+TAG_VALIDATION_THRESHOLD = 0.2
 
 
 def seconds_to_time(duration_in_seconds):
@@ -35,6 +37,7 @@ class Video(models.Model):
     duration = models.TimeField(verbose_name="Duration(hh:mm:ss):")
     transcript = JSONField(blank=True, default="Leave empty")
     name = models.CharField(blank=True, max_length=500)
+    length_in_sec = models.IntegerField(blank=True)
 
     def save(self, *args, **kwargs):
         # checks if video has transcript
@@ -51,6 +54,7 @@ class Video(models.Model):
         video_info = youtube_dl.YoutubeDL().extract_info(self.video.format(sID=sID), download=False)
         self.duration = seconds_to_time(video_info['duration'])
         self.name = video_info['title']
+        self.length_in_sec = video_info['duration']
 
         super().save(*args, **kwargs)
 
@@ -86,11 +90,28 @@ class Tagging(models.Model):
     end_seconds = models.DecimalField(decimal_places=2, max_digits=10)
     date_subscribed = models.DateTimeField(default=dt.now())
     description = models.TextField(verbose_name="Subject description:", max_length=50)
+
     rating_value = models.IntegerField(default=0)
-    transcript_score = models.DecimalField(decimal_places=3, max_digits=10)
+    up_votes = models.IntegerField(default=0)
+    down_votes = models.IntegerField(default=0)
+
+    amount_of_comments = models.IntegerField(default=0)
+    transcript_score = models.FloatField()
+    rating_score = models.FloatField(default=0)
+    total_tag_score = models.FloatField(default=0)
+    is_validated = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Tagging description - {self.description}"
+
+    def save(self, *args, **kwargs):
+        self.rating_score = rating_score_calc(self.up_votes, self.down_votes)
+        self.total_tag_score = calculate_total_rating_score_for_tag(self.rating_score, self.transcript_score)
+        if self.total_tag_score >= TAG_VALIDATION_THRESHOLD:
+            self.is_validated = True
+        else:
+            self.is_validated = False
+        super().save(*args, **kwargs)
 
 
 class UserRatingValidator:
@@ -108,6 +129,7 @@ class UserRatingValidator:
 class UserRating(models.Model):
     creator = models.ForeignKey(User, on_delete=models.CASCADE)
     tagging = models.ForeignKey(Tagging, on_delete=models.CASCADE)
+    video = models.ForeignKey(Video, on_delete=models.CASCADE)
     is_upvote = models.BooleanField()
 
 
@@ -124,5 +146,4 @@ class Comment(models.Model):
         ordering = ('created',)
 
     def __str__(self):
-        return f'Comment by {self.creator}\n' \
-               f'{self.body}'
+        return f'Comment by {self.creator}, content - {self.body}'
