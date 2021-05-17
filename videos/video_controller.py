@@ -8,6 +8,7 @@ from django.core import serializers
 from videos.tasks import get_transcript_score_async
 from videos.tag_similarity import is_similar
 from videos.Utils import _normalize_column, calculate_total_rating_score_for_tags
+from .spammers import *
 
 pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
@@ -87,7 +88,6 @@ def create_tag(video, user, start_time, end_time, description):
                                          video=video)
     if errors:
         return errors
-
     tags_for_similarity_test = get_tags_for_video_in_time_range(video, time_to_seconds(start_time))
     for tag in tags_for_similarity_test:
         if is_similar(description, tag.description):
@@ -121,7 +121,7 @@ def create_user_rating(creator, tagging, is_upvote):
 def choose_which_tags_to_show(video, user_id: int) -> List[Tagging]:
     # Step 1 - Create data frames
     df = pd.DataFrame(list(Tagging.objects.filter(video=video).values(
-        'agg_rating_score', 'start_seconds', 'id', 'transcript_score', 'description', 'is_validated')))
+        'rating_score', 'start_seconds', 'id', 'transcript_score', 'description', 'is_validated')))
     df_user_ratings = pd.DataFrame(list(UserRating.objects.filter(creator=user_id, video=video).values('tagging')))
     if df.empty:
         return []

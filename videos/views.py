@@ -16,7 +16,11 @@ def video(request, identifier):
     tags = get_tags_for_video(video, request.user.id)
     if request.method == 'POST':
         form = VideoTaggingForm(request.POST)
-        if form.is_valid():
+
+        if calculate_number_of_allowed_tags_per_video(video, request.user) == 0:
+            messages.error(request, "You can't tag more, as you reached your own maximum, "
+                                    "please wait for your tags to be reviewed by others")
+        elif form.is_valid():
             # create a new model in the data base with the filled form information
             start_time = form.cleaned_data.get("start")
             end_time = form.cleaned_data.get("end")
@@ -24,7 +28,7 @@ def video(request, identifier):
             create_tag(video, request.user, start_time, end_time, description)
             return HttpResponseRedirect(request.path_info)
         else:
-            messages.error(request, 'Invalid form')
+            messages.error(request, 'One of the values you have entered are Illegal, Please try Again')
 
     return render(request, 'videos/video.html', {'obj': video, 'form': VideoTaggingForm(), 'tags': tags,
                                                  'ratings_for_user': get_tags_active_for_user(request.user, tags)})
@@ -78,9 +82,15 @@ def create_comment(request):
         if len(comment_body) > 400:
             messages.error(request, 'Comment text exceeded maximum length')
         else:
+            parent_id = int(data['parent_id']) if 'parent_id' in data else None
+            # Spamming validation
+            if parent_id and not is_user_able_to_post_reply_on_comment(request.user, tag, parent_id):
+                messages.error(request, "You can't post more replys for this comment")
+            elif not parent_id and not is_user_able_to_post_comment_on_tag(request.user, tag):
+                messages.error(request, "You can't post more comments for this tag")
+
             comment = Comment(body=comment_body, tag=tag, video=tag.video,
                               create=User.objects.get(id=request.user.id))
-            parent_id = int(data['parent_id']) if 'parent_id' in data else None
             if parent_id:
                 # reply comment
                 parent_comment = Comment.objects.get(id=parent_id)

@@ -1,8 +1,9 @@
 import math
-import numpy as np
-import pandas as pd
 from pandas import DataFrame
 
+####--------GLOBALS---------####
+MIN_INTEVAL_SIZE = 60  # seconds
+####------------------------####
 
 def rating_score_calc(ups: int, downs: int) -> float:
     # Using variation of Reddit comment rating algorithm based on lower bound of Wilson's confidence interval.
@@ -11,7 +12,8 @@ def rating_score_calc(ups: int, downs: int) -> float:
         return 0
     z = 1.96  # confidence of 0.95%
     phat = float(ups) / n
-    return (phat + z * z / (2 * n) - z * math.sqrt((phat * (1 - phat) + z * z / (4 * n)) / n)) / (1 + z * z / n)
+    return round((phat + z * z / (2 * n) - z *
+                  math.sqrt((phat * (1 - phat) + z * z / (4 * n)) / n)) / (1 + z * z / n), 10)
 
 
 def calculate_total_rating_score_for_tags(df: DataFrame) -> DataFrame:
@@ -39,6 +41,6 @@ def _normalize_column(df: DataFrame, col_name: str) -> DataFrame:
     return df
 
 
-def compute_video_buckets(length_seconds: int) -> int:
+def compute_video_bucket_length(length_seconds: int) -> int:
     bucket_length = round(length_seconds / math.log(length_seconds))
-    return max(bucket_length, 60)
+    return max(bucket_length, MIN_INTEVAL_SIZE)
