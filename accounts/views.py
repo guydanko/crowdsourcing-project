@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from django.contrib import messages, auth
+from django.contrib import auth, messages
 from django.contrib.auth.models import User
 
 
@@ -16,7 +16,8 @@ def register(request):
         if password == password2:
             if not User.objects.filter(username=username).exists():
                 if not User.objects.filter(email=email).exists():
-                    user = User.objects.create_user(username=username, password=password, email=email, first_name=first_name, last_name=last_name)
+                    user = User.objects.create_user(username=username, password=password, email=email,
+                                                    first_name=first_name, last_name=last_name)
                     user.save()
                     messages.success(request, 'User was created successfully')
                     return redirect('accounts:login')
@@ -25,7 +26,7 @@ def register(request):
                     return redirect('accounts:register')
             else:
                 messages.error(request, 'Username already exists')
-                return redirect('accounts:register')
+            return redirect('accounts:register')
         else:
             messages.error(request, 'Passwords do not match')
             return redirect('accounts:register')
@@ -41,7 +42,7 @@ def login(request):
         if user:
             auth.login(request, user)
             # can be used with: {% if user.is_authenticated %}
-            messages.success(request, f'Welcome {username}')
+            messages.success(request, f'{username}, welcome to TAGV!')
             return redirect('layout:index')
         else:
             messages.error(request, 'Invalid credentials')
@@ -55,9 +56,3 @@ def logout(request):
     auth.logout(request)
     messages.success(request, 'You are now logged out')
     return redirect('layout:index')
-
-
-
-
-
-

@@ -29,8 +29,9 @@ def get_all_tags_for_video_by_id(video_id) -> List[Tagging]:
 
 def get_all_user_tags_for_video(user_id, video_id) -> List[Tagging]:
     return Tagging.objects.filter(creator__id=user_id, video_id=video_id).order_by('start__hour',
-                                                                                              'start__minute',
-                                                                                              'start__second')
+                                                                                   'start__minute',
+                                                                                   'start__second')
+
 
 def get_all_ratings_for_tag(tagging) -> List[UserRating]:
     return UserRating.objects.filter(tagging=tagging)
@@ -79,6 +80,7 @@ def create_tagging(video, user, start_time, end_time, description):
     tag = Tagging.objects.create(creator=user, start=start_time, end=end_time,
                                  description=description, video=video)
     tag.save()
+    return errors
 
 
 def create_user_rating(creator, tagging, is_upvote):

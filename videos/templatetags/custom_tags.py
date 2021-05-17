@@ -28,3 +28,8 @@ def index(sequence, position):
 @register.filter(name='equal')
 def equal(obj1, obj2):
     return obj1 == obj2
+
+
+@register.filter(name='message_to_list')
+def duration(messages):
+    return [str(msg) for msg in messages]
