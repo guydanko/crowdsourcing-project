@@ -34,17 +34,9 @@
 }
 
 
-.table tr:hover {
-    background-color: #EBEBEB;
-    cursor: pointer;
-}
-
 .parent{
     padding-top: 15px;
 }
-
-
-
 
 
 .fa-thumbs-down {

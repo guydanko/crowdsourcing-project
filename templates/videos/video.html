@@ -11,7 +11,9 @@
                 <div id="youtube-tracking-script"></div>
                 <div class="container col-md-6 bg-light border rounded p-3" id="video-page-div">
                     <div class="video-responsive">
-                        {% video obj.video %}
+                        <div id="video-youtube">
+                            {% video obj.video %}
+                        </div>
                     </div>
                     <span class="badge bg-secondary text-light">{{ obj.duration|time:'H:i:s' }}</span>
                 </div>
@@ -56,20 +58,21 @@
                                             <td scope="col" colspan="10%" class="inner-td">
                                             </td>
                                             <td scope="col" colspan="10%" class="inner-td">
-                                                <div onclick="sendCommentsRequest({{ tag.id }})">
-                                                    <i class="far fa-comments"></i>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                            <td scope="col" colspan="10%" class="inner-td">
                                                 {% if tag.creator.id == user.id %}
                                                     <div class="clickable delete-tag" onclick="deleteTag({{ tag.id }})">
-                                                        <i class="bi bi-trash"></i>
+                                                        <i class="fa fa-trash" aria-hidden="true"></i>
                                                         </a>
 
                                                     </div>
                                                 {% endif %}
                                             </td>
+                                            <td scope="col" colspan="10%" class="inner-td">
+                                                <div class="clickable" onclick="sendCommentsRequest({{ tag.id }})">
+                                                    <i class="far fa-comments"></i>
+                                                </div>
+                                            </td>
+
+
                                         </tr>
                                         <tr class="inner-row">
                                             <td class="inner-td td description" scope="col"
@@ -153,16 +156,18 @@
                                             <td scope="col" colspan="10%" class="inner-td">
                                             </td>
                                             <td scope="col" colspan="10%" class="inner-td">
-                                                <i class="far fa-comments"></i>
-                                            </td>
-                                            <td scope="col" colspan="10%" class="inner-td">
                                                 {% if tag.creator.id == user.id %}
                                                     <div class="clickable delete-tag" onclick="deleteTag({{ tag.id }})">
-                                                        <i class="bi bi-trash"></i>
+                                                        <i class="fa fa-trash" aria-hidden="true"></i>
                                                         </a>
 
                                                     </div>
                                                 {% endif %}
+                                            </td>
+                                            <td scope="col" colspan="10%" class="inner-td">
+                                                <div class="clickable" onclick="sendCommentsRequest({{ tag.id }})">
+                                                    <i class="far fa-comments"></i>
+                                                </div>
                                             </td>
 
 
@@ -203,7 +208,7 @@
                 <div class="container col-md-5">
                     <div>
                         <div class="container-fluid p-2 comments table-responsive" id="comments">
-                            <table class="table bg-light border rounded" id="comments_table" >
+                            <table class="table bg-light border rounded" id="comments_table">
                             </table>
 
                             <div class="container p-2 bg-light border rounded" id="no-comments"></div>
@@ -211,27 +216,28 @@
                     </div>
                     <div class="display-none" id="div_form_replay">
                         <form name="form-replies" action="{% url 'videos:create_comment' %}" method="POST">
-                                {% csrf_token %}
-                                <div class="form-group">
-                                    <label htmlFor="body"></label>
-                                    <input type="text" name="body" className="form-control" required>
-                                </div>
-                                <input type="hidden" name="tag_id" id ="input_tag_id">
-                                <input type="hidden" name="parent_id" id ="parent_id">
-                                <input type="submit" value="Replay" className="btn btn-primary">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label htmlFor="body"></label>
+                                <input type="text" name="body" className="form-control" required>
+                            </div>
+                            <input type="hidden" name="tag_id" id="input_tag_id">
+                            <input type="hidden" name="parent_id" id="parent_id">
+                            <input type="submit" value="Replay" className="btn btn-primary">
                         </form>
                     </div>
                     <div class="parent">
                         <div class="container p-2 border rounded bg-light display-none" id="add-comments">
-                             <form name="form-comments" action="{% url 'videos:create_comment' %}" method="POST" id="form-comments">
-                                 {% csrf_token %}
-                                 <div class="form-group">
-                                     <label for="body"><h4>Add new comment:</h4></label>
-                                     <input type="text" name="body" class="form-control" required>
-                                 </div>
-                                 <input type="hidden" name="tag_id" id ="input_id">
-                                 <input type="submit" value="Create comment" class="btn btn-primary">
-                             </form>
+                            <form name="form-comments" action="{% url 'videos:create_comment' %}" method="POST"
+                                  id="form-comments">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label for="body"><h4>Add new comment:</h4></label>
+                                    <input type="text" name="body" class="form-control" required>
+                                </div>
+                                <input type="hidden" name="tag_id" id="input_id">
+                                <input type="submit" value="Create comment" class="btn btn-primary">
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -265,16 +271,14 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
-    <script src="https://cdn.jsdelivr.net/bootbox/4.4.0/bootbox.min.js"></script>
     <link rel="stylesheet" href="{% static "css/video.css" %}">
     <link rel="stylesheet" href="{% static "css/videos.css" %}">
-    <script>var video_pk = {{ obj.id }}</script>
+    <script type="text/javascript">
+        var video_pk = {{ obj.id }};
+    </script>
     <script src="{% static 'js/controlVideo.js' %}"></script>
     <script src="{% static 'js/tagControl.js' %}"></script>
     <script src="{% static 'js/commentControl.js' %}"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 {% endblock %}
 
 
