@@ -8,7 +8,7 @@ import datetime
 from django.contrib.auth.models import User
 from youtube_transcript_api import YouTubeTranscriptApi as yt
 import youtube_dl
-from videos.Utils import rating_score_calc, calculate_total_rating_score_for_tag
+from videos.Utils import rating_score_calc, calculate_total_rating_score_for_tag, compute_video_buckets
 
 sID = "t99ULJjCsaM"
 
@@ -38,6 +38,7 @@ class Video(models.Model):
     transcript = JSONField(blank=True, default="Leave empty")
     name = models.CharField(blank=True, max_length=500)
     length_in_sec = models.IntegerField(blank=True)
+    bucket_size = models.IntegerField(blank=True)
 
     def save(self, *args, **kwargs):
         # checks if video has transcript
@@ -50,11 +51,12 @@ class Video(models.Model):
         for vid in Video.objects.all():
             if vid.video == self.video:
                 return
-        # if validation passed - save duration and name
+
         video_info = youtube_dl.YoutubeDL().extract_info(self.video.format(sID=sID), download=False)
         self.duration = seconds_to_time(video_info['duration'])
         self.name = video_info['title']
         self.length_in_sec = video_info['duration']
+        self.bucket_size = compute_video_buckets(self.length_in_sec)
 
         super().save(*args, **kwargs)
 
@@ -82,6 +84,7 @@ class TaggingValidator:
 
 
 class Tagging(models.Model):
+    # General Info - Not subjective to Change after creation
     creator = models.ForeignKey(User, on_delete=models.CASCADE)
     video = models.ForeignKey(Video, on_delete=models.CASCADE)
     start = models.TimeField(verbose_name="Start(hh:mm:ss):")
@@ -90,14 +93,13 @@ class Tagging(models.Model):
     end_seconds = models.DecimalField(decimal_places=2, max_digits=10)
     date_subscribed = models.DateTimeField(default=dt.now())
     description = models.TextField(verbose_name="Subject description:", max_length=50)
+    transcript_score = models.FloatField()
 
+    # like/dislike counters, and scores that are dynamically changed each save
     rating_value = models.IntegerField(default=0)
     up_votes = models.IntegerField(default=0)
     down_votes = models.IntegerField(default=0)
-
-    amount_of_comments = models.IntegerField(default=0)
-    transcript_score = models.FloatField()
-    rating_score = models.FloatField(default=0)
+    agg_rating_score = models.FloatField(default=0)
     total_tag_score = models.FloatField(default=0)
     is_validated = models.BooleanField(default=False)
 
@@ -105,8 +107,8 @@ class Tagging(models.Model):
         return f"Tagging description - {self.description}"
 
     def save(self, *args, **kwargs):
-        self.rating_score = rating_score_calc(self.up_votes, self.down_votes)
-        self.total_tag_score = calculate_total_rating_score_for_tag(self.rating_score, self.transcript_score)
+        self.agg_rating_score = rating_score_calc(self.up_votes, self.down_votes)
+        self.total_tag_score = calculate_total_rating_score_for_tag(self.agg_rating_score, self.transcript_score)
         if self.total_tag_score >= TAG_VALIDATION_THRESHOLD:
             self.is_validated = True
         else:
@@ -138,12 +140,12 @@ class Comment(models.Model):
     tag = models.ForeignKey(Tagging, related_name='comments', on_delete=models.CASCADE)
     creator = models.ForeignKey(User, on_delete=models.CASCADE)
     body = models.TextField(max_length=50)
-    created = models.DateTimeField(auto_now_add=True)
+    creation_date = models.DateTimeField(auto_now_add=True)
     parent = models.ForeignKey('self', null=True, blank=True, related_name='replies', on_delete=models.CASCADE)
     is_reply = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ('created',)
+        ordering = ('creation_date',)
 
     def __str__(self):
         return f'Comment by {self.creator}, content - {self.body}'

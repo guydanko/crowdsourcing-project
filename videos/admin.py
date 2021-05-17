@@ -4,7 +4,7 @@ from .models import Video, Tagging, Comment
 
 
 class MyModelAdmin(AdminVideoMixin, admin.ModelAdmin):
-    exclude = ('duration', 'transcript', 'name')
+    exclude = ('duration', 'transcript', 'name','length_in_sec', 'bucket_size')
 
 
 class TaggingAdmin(admin.ModelAdmin):

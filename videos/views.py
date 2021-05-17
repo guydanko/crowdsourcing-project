@@ -87,7 +87,6 @@ def create_comment(request):
                 comment.parent = parent_comment
                 comment.is_reply = True
             comment.save()
-            tag.amount_of_comments += 1
             messages.success(request, 'Comment saved successfully')
 
         comments, status_code = get_serialized_comments_for_tag(tag)
@@ -103,7 +102,6 @@ def delete_comment(request):
         if comment.creator.id == request.user.id:
             try:
                 comment.delete()
-                tag.amount_of_comments -= 1
             except AttributeError:
                 messages.warning(request, 'The comment could not be deleted.')
         else:

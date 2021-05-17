@@ -119,41 +119,40 @@ def create_user_rating(creator, tagging, is_upvote):
 
 
 def choose_which_tags_to_show(video, user_id: int) -> List[Tagging]:
-    # creates df from the tags in order to put them in different time intervals buckets
+    # Step 1 - Create data frames
     df = pd.DataFrame(list(Tagging.objects.filter(video=video).values(
-        'rating_score', 'start_seconds', 'id', 'transcript_score', 'description', 'is_validated')))
-    # TODO add function to compute similarity_delta
+        'agg_rating_score', 'start_seconds', 'id', 'transcript_score', 'description', 'is_validated')))
     df_user_ratings = pd.DataFrame(list(UserRating.objects.filter(creator=user_id, video=video).values('tagging')))
+    if df.empty:
+        return []
     if df_user_ratings.empty:
         df_user_ratings = pd.DataFrame({'tagging': []})
-    print(f"this is my user id ----------------------------------------- {user_id}")
-    print(df_user_ratings)
-    df['bucket'] = (df['start_seconds'] / SIMILARITY_DELTA).astype(int)
-    print(df)
-    groups = df.groupby(by='bucket')
-    tags_to_show = []
-    # Iterate over each bucket and sort the values by total_tag_score and transcript score
-    for key, grp in groups:
-        grp = _normalize_column(grp, col_name='transcript_score')
-        grp = calculate_total_rating_score_for_tags(grp)
-        grp = grp.sort_values(by=['is_validated', 'total_tag_score', 'transcript_score'], ascending=False)
-        print(grp)
-        tags_to_show.extend(_pick_tags_from_time_interval(grp, df_user_ratings))
-
+    # Step 2 - split to intervals and get top tags
+    df['bucket'] = (df['start_seconds'] / video.bucket_size).astype(int)
+    df['Show_Tag'] = 0
+    df = df.groupby(by='bucket').apply(_pick_tags_from_time_interval, df_user_ratings=df_user_ratings)
+    # Step 3 - Take id's which has been decided by the algo to show and return their associated tags
+    tags_to_show = df[df['Show_Tag'] == 1]['id']
     return Tagging.objects.filter(id__in=tags_to_show).order_by('start__hour', 'start__minute', 'start__second')
 
 
-def _pick_tags_from_time_interval(df: DataFrame, df_user_ratings: DataFrame) -> List[int]:
+def _pick_tags_from_time_interval(df: DataFrame, df_user_ratings: DataFrame) -> DataFrame:
+    # Init parameters, min-max normalize the transcript_score, calculate tag score etc...
     validated_tags = 3
     random_validated = 2
     potential_tags = 3
     random_tail_tags = 2
 
+    df = _normalize_column(df, col_name='transcript_score')
+    df = calculate_total_rating_score_for_tags(df)
+    df = df.sort_values(by=['is_validated', 'total_tag_score', 'transcript_score'], ascending=False)
     validated_df = df[df['is_validated']]
     not_val_not_vote = df[(~df['id'].isin(df_user_ratings['tagging']) & (df['is_validated'] == False))]
+
     # Case nothing to choose from
     if df.shape[0] <= 10:
-        return list(df['id'])
+        df['Show_Tag'] = 1
+        return df
     # Case we have enough validated
     elif validated_df.shape[0] >= validated_tags + random_validated:
         print('In first elif')
@@ -167,7 +166,6 @@ def _pick_tags_from_time_interval(df: DataFrame, df_user_ratings: DataFrame) -> 
         if len(ids_to_show) < 10:
             rest_ids = df[~df['id'].isin(ids_to_show)]
             ids_to_show.extend(rest_ids[:10 - len(ids_to_show)]['id'])
-        return ids_to_show
     # Case not enough validated
     else:
         print('In second elif')
@@ -179,14 +177,17 @@ def _pick_tags_from_time_interval(df: DataFrame, df_user_ratings: DataFrame) -> 
         if len(pot_tags) == not_val_not_vote.shape[0]:
             rest_ids = df[~df['id'].isin(ids_to_show)]
             ids_to_show += rest_ids[:10 - len(ids_to_show)]['id']
-            return ids_to_show
+
         else:
             df_len = not_val_not_vote[len(pot_tags):].shape[0]
             # pick random from tail
             ids_to_show += list(not_val_not_vote[len(pot_tags):].sample(n=min(random_tail_tags, df_len))['id'])
             if len(ids_to_show) < 10:
                 ids_to_show += list(df[~df['ids'].isin(ids_to_show)]['id'])
-            return ids_to_show
+
+    # Mark all tags we decided to show with 1 the rest by default are 0
+    df.loc[df['id'].isin(ids_to_show), 'Show_Tag'] = 1
+    return df
 
 
 # Comment controllers
