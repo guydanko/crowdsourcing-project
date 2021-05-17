@@ -91,10 +91,12 @@ def search_videos(request):
 @csrf_exempt
 @api_view(['POST'])
 def create_comment(request):
+    print("start create_comment!!")
     if request.method == 'POST':
         data = request.POST
         tag = get_tag_by_id(data['tag_id'])
         comment_body = data['body']
+        print("in view!!")
         if len(comment_body) > 400:
             messages.error(request, 'Comment text exceeded maximum length')
         else:
@@ -110,7 +112,7 @@ def create_comment(request):
             messages.success(request, 'Comment saved successfully')
 
         comments, status_code = get_serialized_comments_for_tag(tag)
-        return JsonResponse({'comments_list': comments}, status=status_code)
+        return JsonResponse({'comments_list': comments, 'tag_id': data['tag_id']}, status=status_code)
 
 
 @csrf_exempt

@@ -205,8 +205,21 @@
                         <div class="container-fluid p-2 comments table-responsive" id="comments">
                             <table class="table bg-light border rounded" id="comments_table" >
                             </table>
+
                             <div class="container p-2 bg-light border rounded" id="no-comments"></div>
                         </div>
+                    </div>
+                    <div class="display-none" id="div_form_replay">
+                        <form name="form-replies" action="{% url 'videos:create_comment' %}" method="POST">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label htmlFor="body"></label>
+                                    <input type="text" name="body" className="form-control" required>
+                                </div>
+                                <input type="hidden" name="tag_id" id ="input_tag_id">
+                                <input type="hidden" name="parent_id" id ="parent_id">
+                                <input type="submit" value="Replay" className="btn btn-primary">
+                        </form>
                     </div>
                     <div class="parent">
                         <div class="container p-2 border rounded bg-light display-none" id="add-comments">
@@ -216,6 +229,7 @@
                                      <label for="body"><h4>Add new comment:</h4></label>
                                      <input type="text" name="body" class="form-control" required>
                                  </div>
+                                 <input type="hidden" name="tag_id" id ="input_id">
                                  <input type="submit" value="Create comment" class="btn btn-primary">
                              </form>
                         </div>

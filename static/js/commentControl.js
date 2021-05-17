@@ -1,12 +1,13 @@
 
-function showComments(comments){
+function showComments(comments, tag_id){
+    console.log("1 tag_id: "+tag_id)
     var div = document.getElementById("no-comments");
     div.innerHTML = ""
 
     var table = document.getElementById("comments_table")
     table.innerHTML = "";
 
-    console.log("comments:         "+comments)
+
     var header = table.createTHead();
     header.style.color = "#FFFFFF";
     var row = header.insertRow(0);
@@ -21,6 +22,11 @@ function showComments(comments){
 
     var tbody = document.createElement("TBODY");
     table.appendChild(tbody);
+
+    var input_tag_id = document.getElementById("input_tag_id") ;
+    input_tag_id.setAttribute("value", tag_id);
+    var parent_id;
+    var div_form_replay;
 
     for (i=comments.length-1; i>=0;i--) {
         //adding comments
@@ -50,25 +56,30 @@ function showComments(comments){
              cell.innerHTML = "<b>Replies</b>"
             cell.colSpan = 80;
 
+             console.log("row.id: "+row.id)
+             parent_id = document.getElementById("parent_id") ;
+             parent_id.setAttribute("value", row.id);
+             console.log("parent_id.value: "+parent_id.value)
+
+             div_form_replay = document.getElementById("div_form_replay");
+             console.log(div_form_replay.innerHTML);
+
+
              row = tbody.insertRow(2);
              row.className = "display-none"
             row.style.backgroundColor = "light"
-            cell = row.insertCell(0);
-             cell.innerHTML = "<button type='submit' class='btn btn-primary' , name='save comment'>Replay</button>"
-            cell.colSpan = 20
+            row.innerHTML = div_form_replay.innerHTML;
 
-            cell = row.insertCell(1);
-             cell.innerHTML ="<input type='text' name='body' class='form-control' required>"
-
-
-            cell.colSpan = 80;
         }
+
+        // console.log(row.innerHTML);
+
     }
 
     for (i=comments.length-1; i>=0;i--){
         //adding replies
-        var parent_id
-        var comment_tr
+        var parent_id;
+        var comment_tr;
         var newrow;
         if ( comments[i].fields.is_reply ){
             parent_id = comments[i].fields.parent;
@@ -101,21 +112,17 @@ function showComments(comments){
             tr.addClass('display-none');
         }
     })
+    console.log("finish show comment!")
 }
 
 
 function commentForm(tag_id){
+
+    var input_id = document.getElementById("input_id")
+    input_id.setAttribute("value", tag_id)
     var div = document.getElementById("add-comments");
     div.classList.remove("display-none");
-    form = document.getElementById("form-comments");
-
-
-    var input_id = document.createElement("input") ;
-    input_id.type = "hidden";
-    input_id.name = "tag_id";
-    input_id.value = tag_id;
-
-    form.appendChild(input_id)
+    // console.log(div.innerHTML)
 
 
 
@@ -143,10 +150,10 @@ function sendCommentsRequest(tagId){
             const statusCode = data.status
             console.log(statusCode)
             if (statusCode === 200 || statusCode == 201) {
-                 console.log(data.responseJSON.comments_list)
+                 // console.log(data.responseJSON.comments_list)
                 var comments = JSON.parse(data.responseJSON.comments_list)
-                showComments(comments)
-                console.log("tag_id: "+data.responseJSON.tag_id)
+                showComments(comments, data.responseJSON.tag_id)
+                // console.log("tag_id: "+data.responseJSON.tag_id)
                 commentForm(data.responseJSON.tag_id)
             }
             if (statusCode === 204) {
@@ -160,38 +167,19 @@ function sendCommentsRequest(tagId){
 $(function(){
   $('form[name=form-comments]').submit(function(){
     $.post($(this).attr('action'), $(this).serialize(), function(jsonData) {
-        console.log(jsonData.comments_list);
-        showComments(jsonData.comments_list)
+        showComments(JSON.parse(jsonData.comments_list))
     }, "json");
     return false;
   });
 });
 
-function sendAddCommentRequest(){
-
-        $.ajax({
-        url: '/videos/create_comment/',
-        type: 'POST',
-        data: {
-            csrfmiddlewaretoken: window.CSRF_TOKEN,
-            'tag_id': tagId,
-        },
-        dataType: 'json',
-        complete: function (data) {
-            const statusCode = data.status
-            console.log(statusCode)
-            if (statusCode === 200 || statusCode == 201) {
-                 console.log(data.responseJSON.comments_list)
-                var comments = JSON.parse(data.responseJSON.comments_list)
-                showComments(comments)
-                console.log("tag_id: "+data.responseJSON.tag_id)
-                commentForm(data.responseJSON.tag_id)
-            }
-            if (statusCode === 204) {
-                noComments()
-                commentForm(data.responseJSON.tag_id)
-            }
-
-        }
-        })
-}
+$(function(){
+  $('form[name=form-replies]').submit(function(){
+      console.log("before response!!!")
+    $.post($(this).attr('action'), $(this).serialize(), function(jsonData) {
+        console.log("after response!!!")
+        showComments(JSON.parse(jsonData.comments_list), jsonData.tag_id)
+    }, "json");
+    return false;
+  });
+});
