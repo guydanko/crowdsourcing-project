@@ -4,7 +4,7 @@ import tensorflow_hub as hub
 
 embedding = hub.load('universal-sentence-encoder_4')
 
-SIMILARITY_THRESHOLD = 0.8
+SIMILARITY_THRESHOLD = 0.9
 
 
 def is_similar(tag1, tag2):

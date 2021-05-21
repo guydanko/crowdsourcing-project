@@ -95,7 +95,8 @@ def create_tag(video, user, start_time, end_time, description):
     start_seconds = time_to_seconds(start_time)
     end_seconds = time_to_seconds(end_time)
 
-    # get_transcript_score_async(video.transcript, user.id, start_time, end_time, description, video.id, start, end)  # sync
+    # get_transcript_score_async(video.transcript, user.id, start_time, end_time, description, video.id,
+    #                                      start_seconds, end_seconds)  # sync
 
     get_transcript_score_async.delay(video.transcript, user.id, start_time, end_time, description, video.id,
                                      start_seconds, end_seconds)  # async

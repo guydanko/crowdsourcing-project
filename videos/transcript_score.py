@@ -6,14 +6,14 @@ from nltk import ngrams
 from nltk.stem import PorterStemmer
 from PyDictionary import PyDictionary
 
-
 nltk.download('punkt', quiet=True)
 nltk.download('averaged_perceptron_tagger', quiet=True)
 
 
 KEYWORDS_NUMBER_MULTIPLIER = 3
-MAX_NUMBER_OF_KEYWORDS = 20
+MAX_NUMBER_OF_KEYWORDS = 10
 KEYWORDS_NUMBER_LIMITATION_FACTOR = 3
+MATCH_BONUS = 0.2
 
 # stopwords from FRAKES source code
 stopwords = ['somehow', 'which', 'before', 'three', 'or', 'should', 'might', 'own', 'those', 'to', 'above', 'nor', 'me',
@@ -103,9 +103,9 @@ def extract_relevant_transcript(start, end, list_of_transcrit_dictionaries):
     for transcript_dictionary in list_of_transcrit_dictionaries:
         current_transcript_start = transcript_dictionary["start"]
         if start <= current_transcript_start <= end:
+            print(transcript_dictionary["text"])
             cleaned_relevant_transcript += clean_transcript_text(transcript_dictionary["text"]) + " "
 
-    print(cleaned_relevant_transcript)
     return cleaned_relevant_transcript
 
 
@@ -119,18 +119,21 @@ def get_number_of_keywords(cleaned_relevant_transcript, user_tag_text_split):
 
 def reformat_kw(key_phrase_to_rating):
     key_phrases_as_tuples_to_rating = {}
+    sum_of_scores = max(key_phrase_to_rating.values())
     for phrase, rating in key_phrase_to_rating.items():
         phrase_as_tupe = tuple(sorted([ps.stem(word) for word in phrase.split()]))
         if phrase_as_tupe in key_phrases_as_tuples_to_rating:
-            key_phrases_as_tuples_to_rating[phrase_as_tupe] += rating
+            key_phrases_as_tuples_to_rating[phrase_as_tupe] += rating/sum_of_scores
         else:
-            key_phrases_as_tuples_to_rating[phrase_as_tupe] = rating
+            key_phrases_as_tuples_to_rating[phrase_as_tupe] = rating/sum_of_scores
     print(key_phrases_as_tuples_to_rating)
     return key_phrases_as_tuples_to_rating
 
 
 def get_n_gram(user_tag_text_split, n):
     n_gram_output = [tuple(sorted(gram)) for gram in ngrams(user_tag_text_split, n)]
+    # ignore duplicates
+    n_gram_output = set(n_gram_output)
     print(n_gram_output)
     return n_gram_output
 
@@ -187,4 +190,12 @@ def get_transcript_score(transcript_json, start, end, users_tag_text):
     print(two_gram_score_normalized)
     print(three_gram_score_normalized)
 
-    return one_gram_score_normalized + two_gram_score_normalized + three_gram_score_normalized
+    score_avg = (one_gram_score_normalized + two_gram_score_normalized + three_gram_score_normalized)/3
+    # 0.0 - 1.0 (score >> 0.5 in very rare cases)
+    if score_avg:
+        # 0.4 - 1.0
+        final_score = score_avg + MATCH_BONUS
+    else:
+        # 0.0 -> no matches at all for transcript
+        final_score = score_avg
+    return final_score
