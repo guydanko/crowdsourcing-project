@@ -215,11 +215,11 @@
                         </div>
                     </div>
                     <div class="display-none" id="div_form_replay">
-                        <form name="form-replies" action="{% url 'videos:create_comment' %}" method="POST">
+                        <form name ="form-replies" id="form-replies" action="{% url 'videos:create_comment' %}" method="POST">
                             {% csrf_token %}
-{#                            <button  class="btn btn-primary" id="buttomReplay">Replay</button>#}
-                            <input type="button"  value="Replay" className="btn btn-primary" id="buttomReplay">
-{#                            <input type="submit" value="Replay" className="btn btn-primary">#}
+{#                            <button  class="btn btn-primary" id="button_replay">Replay</button>#}
+                            <input type="button"  name="submit" value="Replay" onclick="myFunction(this.form)" className="btn btn-primary" id="button_replay">
+{#                            <input type="submit" value="Replay" className="btn btn-primary" id="button_replay">#}
                             <label htmlFor="body"></label>
                             <input type="text" name="body" className="form-control" required>
                             <input type="hidden" name="tag_id" id="input_tag_id">
@@ -251,15 +251,12 @@
                             <form action="." method="post">
                                 {% csrf_token %}
                                 <div class="form-row">
-                                    <div class="form-group col-md-6 mb-0">
+                                    <div class="form-group col-md-6 mb-5">
                                         {{ form.start|as_crispy_field }}
                                     </div>
                                     <div class="form-group col-md-6 mb-0">
                                         {{ form.end|as_crispy_field }}
                                     </div>
-{#                                    <div class="form-group col-md-6 mb-0">#}
-{#                                        {{ form.TimeTry|as_crispy_field }}#}
-{#                                    </div>#}
                                 </div>
                                 {{ form.description|as_crispy_field }}
                                 <button type="submit" class="btn btn-primary" , name="save">Create Tag</button>
@@ -278,6 +275,7 @@
     <link rel="stylesheet" href="{% static "css/videos.css" %}">
     <script type="text/javascript">
         var video_pk = {{ obj.id }};
+        var user_id = {{ user.id }};
     </script>
     <script src="{% static 'js/controlVideo.js' %}"></script>
     <script src="{% static 'js/tagControl.js' %}"></script>

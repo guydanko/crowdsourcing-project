@@ -127,3 +127,7 @@ td.topnav:hover{
 .display-none{
     display: none;
 }
+input[type=time]{
+    /*min-width: 160px;*/
+    /*position: absolute;*/
+}

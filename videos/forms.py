@@ -1,33 +1,31 @@
 from django import forms
-from django.forms import CharField, HiddenInput, widgets
+from django.forms import CharField, HiddenInput, TimeInput
+from django.contrib.admin import widgets
 
 from .models import Tagging
 
 
 class VideoTaggingForm(forms.ModelForm):
     showAllTags = CharField(widget=HiddenInput(), required=False)
-    # TimeTry = forms.TimeField(widget=forms.TimeInput(format='%H:%M:%S'))
 
     class Meta:
         model = Tagging
         exclude = ('creator', 'video', 'rating_value', 'date_subscribed')
-        widgets = {
-            'end': forms.TimeInput(format='%H:%M:%S'),
-            'start': forms.TimeInput(format='%H:%M:%S'),
-        }
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # self.fields["start"].widget.attrs.update({'input_type': 'time'})
-        # self.fields["start"].input_formats = ['%H:%M:%S']
-        # self.fields["start"].step = "2"
-        # self.fields["end"].widget.attrs.update({'input_type': 'time'})
+        super(VideoTaggingForm, self).__init__(*args, **kwargs)
+
         self.fields["end"].widget = TimeInput()
+        self.fields["end"].widget.attrs.update({'step': '1'})
         self.fields["start"].widget = TimeInput()
+        self.fields["start"].widget.attrs.update({'step': '1'})
 
 
 class TimeInput(forms.TimeInput):
     input_type = "time"
 
+    # def __init__(self, **kwargs):
+    #     kwargs["format"] = "%H:%M:%S"
+    #     super().__init__(**kwargs)
 
 
