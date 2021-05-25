@@ -2,7 +2,8 @@ import math
 from pandas import DataFrame
 
 ####--------GLOBALS---------####
-MIN_INTEVAL_SIZE = 60  # seconds
+MIN_INTERVAL_LENGTH = 60  # seconds
+INVALID_THRESHOLD = -1  # Dummy, should be edited
 ####------------------------####
 
 def rating_score_calc(ups: int, downs: int) -> float:
@@ -24,8 +25,6 @@ def calculate_total_rating_score_for_tags(df: DataFrame) -> DataFrame:
 
 
 def calculate_total_rating_score_for_tag(rating_score: float, transcript_score: float) -> float:
-    # TODO there is an issue here as transcript_score is not normalized and can be very high,
-    #  those the rating_score will be less impactful
     weights = [0.9, 0.1]
     return rating_score * weights[0] + transcript_score * weights[1]
 
@@ -43,4 +42,8 @@ def _normalize_column(df: DataFrame, col_name: str) -> DataFrame:
 
 def compute_video_bucket_length(length_seconds: int) -> int:
     bucket_length = round(length_seconds / math.log(length_seconds))
-    return max(bucket_length, MIN_INTEVAL_SIZE)
+    return max(bucket_length, MIN_INTERVAL_LENGTH)
+
+
+def is_tag_invalid(up_votes: int, down_votes: int) -> bool:
+    return (up_votes / max(down_votes, 1)) < INVALID_THRESHOLD

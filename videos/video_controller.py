@@ -10,12 +10,12 @@ from videos.tag_similarity import is_similar
 from videos.Utils import _normalize_column, calculate_total_rating_score_for_tags
 from .spammers import *
 
+# TODO DELETE PRIOR SUBMISSION - DEBUGGING PURPOSE
 pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
 
 SIMILARITY_DELTA = 60
-
 
 def get_all_videos() -> List[Video]:
     return Video.objects.all()
@@ -121,7 +121,7 @@ def create_user_rating(creator, tagging, is_upvote):
 
 def choose_which_tags_to_show(video, user_id: int) -> List[Tagging]:
     # Step 1 - Create data frames
-    df = pd.DataFrame(list(Tagging.objects.filter(video=video).values(
+    df = pd.DataFrame(list(Tagging.objects.filter(video=video, is_invalid=False).values(
         'rating_score', 'start_seconds', 'id', 'transcript_score', 'description', 'is_validated')))
     df_user_ratings = pd.DataFrame(list(UserRating.objects.filter(creator=user_id, video=video).values('tagging')))
     if df.empty:
@@ -156,7 +156,6 @@ def _pick_tags_from_time_interval(df: DataFrame, df_user_ratings: DataFrame) -> 
         return df
     # Case we have enough validated
     elif validated_df.shape[0] >= validated_tags + random_validated:
-        print('In first elif')
         v_tags = list(validated_df[:validated_tags]['id'])
         rnd_v_tags = list(validated_df[validated_tags:].sample(n=random_validated)['id'])
         pot_tags = list(not_val_not_vote[:min(potential_tags, not_val_not_vote.shape[0])]['id'])
@@ -169,7 +168,6 @@ def _pick_tags_from_time_interval(df: DataFrame, df_user_ratings: DataFrame) -> 
             ids_to_show.extend(rest_ids[:10 - len(ids_to_show)]['id'])
     # Case not enough validated
     else:
-        print('In second elif')
         v_tags = list(validated_df['id'])  # took all validated
         diff = validated_tags + random_validated - len(v_tags)
         # took maximal amount of potential + the rest of validated

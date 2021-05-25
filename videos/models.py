@@ -8,7 +8,7 @@ import datetime
 from django.contrib.auth.models import User
 from youtube_transcript_api import YouTubeTranscriptApi as yt
 import youtube_dl
-from videos.Utils import rating_score_calc, calculate_total_rating_score_for_tag, compute_video_bucket_length
+from .Utils import *
 
 sID = "t99ULJjCsaM"
 
@@ -101,7 +101,9 @@ class Tagging(models.Model):
     down_votes = models.IntegerField(default=0)
     rating_score = models.FloatField(default=0)  # aggregated score using wilson's CI lowerbound
     total_tag_score = models.FloatField(default=0)
-    is_validated = models.BooleanField(default=False)
+    is_validated = models.BooleanField(default=False)  # purpose to prioritize from 'non validated' tags
+
+    is_invalid = models.BooleanField(default=False)  # purpose to put in 'trash'
 
     def __str__(self):
         return f"Tagging description - {self.description}"
@@ -109,7 +111,9 @@ class Tagging(models.Model):
     def save(self, *args, **kwargs):
         self.rating_score = rating_score_calc(self.up_votes, self.down_votes)
         self.total_tag_score = calculate_total_rating_score_for_tag(self.rating_score, self.transcript_score)
-        if self.total_tag_score >= TAG_VALIDATION_THRESHOLD:
+        if is_tag_invalid(self.up_votes, self.down_votes):
+            self.is_invalid = True
+        elif self.total_tag_score >= TAG_VALIDATION_THRESHOLD:
             self.is_validated = True
         else:
             self.is_validated = False
