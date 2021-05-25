@@ -1,3 +1,8 @@
+    // if ( window.history.replaceState ) {
+    //     window.history.replaceState( null, null, window.location.href );
+    // }
+
+
 function updateTagCount(toClick, toDisable, counter, rating) {
     counter.innerText = rating
     if (toClick.classList.contains("active")) {

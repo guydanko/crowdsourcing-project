@@ -218,7 +218,7 @@
                         <form name ="form-replies" id="form-replies" action="{% url 'videos:create_comment' %}" method="POST">
                             {% csrf_token %}
 {#                            <button  class="btn btn-primary" id="button_replay">Replay</button>#}
-                            <input type="button"  name="submit" value="Replay" onclick="myFunction(this.form)" className="btn btn-primary" id="button_replay">
+                            <input type="button"  name="submit" value="Replay" onclick="create_reply(this.form)" className="btn btn-primary" id="button_replay">
 {#                            <input type="submit" value="Replay" className="btn btn-primary" id="button_replay">#}
                             <label htmlFor="body"></label>
                             <input type="text" name="body" className="form-control" required>

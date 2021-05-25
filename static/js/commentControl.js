@@ -1,11 +1,4 @@
-function myFunction(oForm){
-    // str = "Form Elements of form " + oForm.name + ": \n"
-    // str += oForm.id +"\n"
-    // for (i = 0; i < oForm.length; i++) {
-    //     str += oForm.elements[i].name + ": "+oForm.elements[i].value+"\n"
-    //     // alert(str)
-    // }
-    //     console.log(str)
+function create_reply(oForm){
     var body = oForm.elements["body"].value;
     var tag_id = oForm.elements["tag_id"].value;
     var parent_id = oForm.elements["parent_id"].value;
@@ -22,16 +15,15 @@ function myFunction(oForm){
         complete: function (data) {
             const statusCode = data.status
             console.log(statusCode)
-            if (statusCode === 200 || statusCode == 201 || statusCode === 204) {
-                 // console.log(data.responseJSON.comments_list)
+            if (statusCode === 200 || statusCode == 201) {
                 var comments = JSON.parse(data.responseJSON.comments_list);
                 showComments(comments, tag_id);
                 commentForm(tag_id);
             }
-            // if (statusCode === 204) {
-            //     noComments()
-            //     commentForm(tag_id)
-            // }
+            if (statusCode === 204) {
+                noComments()
+                commentForm(tag_id)
+            }
 
 
         }
@@ -54,16 +46,16 @@ function delete_comment(tag_id, comment_id){
         complete: function (data) {
             const statusCode = data.status
             console.log(statusCode)
-            if (statusCode === 200 || statusCode == 201 || statusCode === 204) {
+            if (statusCode === 200 || statusCode == 201) {
                  // console.log(data.responseJSON.comments_list)
                 var comments = JSON.parse(data.responseJSON.comments_list);
                 showComments(comments, tag_id);
                 commentForm(tag_id);
             }
-            // if (statusCode === 204) {
-            //     noComments()
-            //     commentForm(tag_id)
-            // }
+            if (statusCode === 204) {
+                noComments()
+                commentForm(tag_id)
+            }
 
         }
     });
@@ -121,10 +113,16 @@ function showComments(comments, tag_id){
 
             cell =row.insertCell(1);
             cell.innerHTML = comments[i].fields.body;
-            cell.colSpan = 85;
+            cell.colSpan = 65;
             cell.style.wordWrap = "break-word";
 
             cell =row.insertCell(2);
+            cell.innerHTML = comments[i].fields.creator_name;
+            cell.colSpan = 20;
+            cell.style.wordWrap = "break-word";
+
+            cell =row.insertCell(3);
+            cell.colSpan = 10;
             div_delete = document.createElement("div");
             div_delete.className = "clickable";
             div_delete.onclick = function (){
@@ -150,8 +148,8 @@ function showComments(comments, tag_id){
             row.style.backgroundColor = "light"
 
             cell = row.insertCell(0);
-             cell.innerHTML = ""
-            cell.colSpan = 10
+             cell.innerHTML = "";
+            cell.colSpan = 10;
 
             cell = row.insertCell(1);
              cell.innerHTML = "<b>Replies</b>"
@@ -272,17 +270,17 @@ function sendCommentsRequest(tagId){
         complete: function (data) {
             const statusCode = data.status
             console.log(statusCode)
-            if (statusCode === 200 || statusCode == 201 || statusCode === 204) {
+            if (statusCode === 200 || statusCode == 201) {
                  // console.log(data.responseJSON.comments_list)
                 var comments = JSON.parse(data.responseJSON.comments_list)
                 showComments(comments, data.responseJSON.tag_id)
                 // console.log("tag_id: "+data.responseJSON.tag_id)
-                commentForm(data.responseJSON.tag_id)
+                commentForm(tagId)
             }
-            // if (statusCode === 204) {
-            //     noComments()
-            //     commentForm(data.responseJSON.tag_id)
-            // }
+            if (statusCode === 204) {
+                noComments()
+                commentForm(tagId)
+            }
 
         }
         })
@@ -291,6 +289,7 @@ $(function(){
   $('form[name=form-comments]').submit(function(){
     $.post($(this).attr('action'), $(this).serialize(), function(jsonData) {
         showComments(JSON.parse(jsonData.comments_list),jsonData.tag_id)
+        commentForm(jsonData.tag_id)
     }, "json");
     return false;
   });

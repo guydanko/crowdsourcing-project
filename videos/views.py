@@ -99,11 +99,12 @@ def create_comment(request):
         tag = get_tag_by_id(data['tag_id'])
         comment_body = data['body']
         print("in view!!")
+        print(request.user.username)
         if len(comment_body) > 400:
             messages.error(request, 'Comment text exceeded maximum length')
         else:
             comment = Comment(body=comment_body, tag=tag, video=tag.video,
-                              creator=request.user)
+                              creator=request.user, creator_name=request.user.username)
             parent_id = int(data['parent_id']) if 'parent_id' in data else None
             if parent_id:
                 # reply comment
@@ -123,6 +124,9 @@ def delete_comment(request):
     if request.method == 'POST':
         tag = get_tag_by_id(request.POST['tag_id'])
         comment = get_comment_by_id(request.POST['comment_id'])
+        print(comment.creator_name)
+        print(request.user.username)
+        print(comment.body)
         if comment.creator.id == request.user.id:
             try:
                 comment.delete()

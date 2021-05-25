@@ -80,8 +80,8 @@ class TaggingValidator:
 class Tagging(models.Model):
     creator = models.ForeignKey(User, on_delete=models.CASCADE)
     video = models.ForeignKey(Video, on_delete=models.CASCADE)
-    start = models.TimeField(verbose_name="Start(hh:mm:ss):")
-    end = models.TimeField(verbose_name="End(hh:mm:ss):")
+    start = models.TimeField(verbose_name="Start:")
+    end = models.TimeField(verbose_name="End:")
     date_subscribed = models.DateTimeField(default=dt.now())
     description = models.TextField(verbose_name="Subject description:", max_length=50)
     rating_value = models.IntegerField(default=0)
@@ -112,6 +112,7 @@ class Comment(models.Model):
     video = models.ForeignKey(Video, on_delete=models.CASCADE)
     tag = models.ForeignKey(Tagging, related_name='comments', on_delete=models.CASCADE)
     creator = models.ForeignKey(User, on_delete=models.CASCADE)
+    creator_name = models.TextField(max_length=150)
     body = models.TextField(max_length=50)
     created = models.DateTimeField(auto_now_add=True)
     parent = models.ForeignKey('self', null=True, blank=True, related_name='replies', on_delete=models.CASCADE)
