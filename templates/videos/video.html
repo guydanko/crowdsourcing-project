@@ -211,17 +211,18 @@
                             <table class="table bg-light border rounded" id="comments_table">
                             </table>
 
-                            <div class="container p-2 bg-light border rounded" id="no-comments"></div>
+                            <div class="container p-2 bg-light border" id="no-comments"></div>
                         </div>
                     </div>
                     <div class="display-none" id="div_form_replay">
                         <form name ="form-replies" id="form-replies" action="{% url 'videos:create_comment' %}" method="POST">
                             {% csrf_token %}
-{#                            <button  class="btn btn-primary" id="button_replay">Replay</button>#}
-                            <input type="button"  name="submit" value="Replay" onclick="create_reply(this.form)" className="btn btn-primary" id="button_replay">
-{#                            <input type="submit" value="Replay" className="btn btn-primary" id="button_replay">#}
+                            <div class="input-group input-group-sm">
                             <label htmlFor="body"></label>
-                            <input type="text" name="body" className="form-control" required>
+                            <input type="text" name="body" class="form-control" required>
+                            <input type="button"  name="submit" value="Replay" onclick="create_reply(this.form)"  id="button_replay">
+                                </div>
+
                             <input type="hidden" name="tag_id" id="input_tag_id">
                             <input type="hidden" name="parent_id" id="parent_id">
                         </form>

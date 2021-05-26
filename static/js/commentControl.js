@@ -1,8 +1,10 @@
 function create_reply(oForm){
+
     var body = oForm.elements["body"].value;
     var tag_id = oForm.elements["tag_id"].value;
     var parent_id = oForm.elements["parent_id"].value;
-        $.ajax({
+
+    $.ajax({
         url: '/videos/create_comment/',
         type: 'POST',
         data: {
@@ -14,7 +16,7 @@ function create_reply(oForm){
         dataType: 'json',
         complete: function (data) {
             const statusCode = data.status
-            console.log(statusCode)
+
             if (statusCode === 200 || statusCode == 201) {
                 var comments = JSON.parse(data.responseJSON.comments_list);
                 showComments(comments, tag_id);
@@ -27,13 +29,11 @@ function create_reply(oForm){
 
 
         }
-        })
+    })
 }
 
 function delete_comment(tag_id, comment_id){
-    console.log("in delete_comment!!")
-    console.log("tag_id: "+tag_id)
-    console.log("comment_id: "+ comment_id)
+
     $.ajax({
         url: '/videos/delete_comment/',
         type: 'POST',
@@ -45,9 +45,8 @@ function delete_comment(tag_id, comment_id){
         dataType: 'json',
         complete: function (data) {
             const statusCode = data.status
-            console.log(statusCode)
+
             if (statusCode === 200 || statusCode == 201) {
-                 // console.log(data.responseJSON.comments_list)
                 var comments = JSON.parse(data.responseJSON.comments_list);
                 showComments(comments, tag_id);
                 commentForm(tag_id);
@@ -91,73 +90,66 @@ function showComments(comments, tag_id){
 
     var input_tag_id = document.getElementById("input_tag_id");
     input_tag_id.setAttribute("value", tag_id);
-    console.log("input_tag_id.value: "+input_tag_id.value);
     input_tag_id.id = "input_tag_id-"+tag_id;
 
     var parent_id;
     var div_form_replay;
     var form_replay;
     var div_delete;
+    var table_comment;
+    var row_comment;
+    var cell_comment;
 
     for (i=comments.length-1; i>=0;i--) {
         //adding comments
         if (! comments[i].fields.is_reply){
             var form_id = comments[i].pk;
-            console.log("start show comment "+i+" body: "+comments[i].fields.body)
             row = tbody.insertRow(0);
             row.id = "comment_header"
             row.style.backgroundColor = "azure"
-            cell = row.insertCell(0);
-            cell.colSpan = 5
-            cell.innerHTML = "<i class='showMore fa fa-angle-double-right'></i>"
 
-            cell =row.insertCell(1);
-            cell.innerHTML = comments[i].fields.body;
-            cell.colSpan = 65;
-            cell.style.wordWrap = "break-word";
+            cell = row.insertCell(0);
+            table_comment = document.createElement("table");
+            table_comment.className ="table table-borderless table-sm"
+            row_comment = table_comment.insertRow(0);
+            cell_comment = row_comment.insertCell(0);
+            cell_comment.innerHTML = "<b>"+comments[i].fields.creator_name+"</b>";
+
+            row_comment = table_comment.insertRow(1);
+            cell_comment = row_comment.insertCell(0);
+            cell_comment.innerHTML = comments[i].fields.body;
+            cell_comment.style.wordWrap = "break-word";
+
+            cell.appendChild(table_comment);
+            cell.colSpan = 68;
+
+            cell = row.insertCell(1);
+            cell.colSpan = 22;
+            cell.style.padding = "30px";
+            cell.innerHTML = "Replies  "+"<i class='showMore fa fa-angle-double-right'></i>"
 
             cell =row.insertCell(2);
-            cell.innerHTML = comments[i].fields.creator_name;
-            cell.colSpan = 20;
-            cell.style.wordWrap = "break-word";
-
-            cell =row.insertCell(3);
-            cell.colSpan = 10;
             div_delete = document.createElement("div");
             div_delete.className = "clickable";
-            div_delete.onclick = function (){
-                delete_comment(tag_id,form_id);
-            }
 
-
+            var num = tag_id
             if(user_id == comments[i].fields.creator){
-                div_delete.innerHTML = "<i class='fa fa-trash' aria-hidden='true'></i>"
-                console.log("Im the creator!!");
+                div_delete.innerHTML = "<i class='fa fa-trash' aria-hidden='true' onclick='delete_comment("+num+","+form_id+")'></i>"
             }else{
-                console.log("Im not the creator!!");
                 div_delete.innerHTML = ""
-
             }
-            console.log(div_delete.innerHTML)
             cell.appendChild(div_delete) ;
             cell.colSpan = 10;
+            cell.style.paddingTop = "30px";
 
             row = tbody.insertRow(1);
             row.className = "display-none"
             row.id = comments[i].pk;
             row.style.backgroundColor = "light"
 
-            cell = row.insertCell(0);
-             cell.innerHTML = "";
-            cell.colSpan = 10;
-
-            cell = row.insertCell(1);
-             cell.innerHTML = "<b>Replies</b>"
-            cell.colSpan = 90;
 
              parent_id = document.getElementById("parent_id") ;
              parent_id.setAttribute("value", row.id);
-              // console.log("parent_id.value: "+parent_id.value)
             parent_id.id = "parent_id-"+form_id
 
             form_replay = document.getElementById("form-replies");
@@ -169,15 +161,17 @@ function showComments(comments, tag_id){
              row.style.backgroundColor = "light";
 
              cell = row.insertCell(0);
+             cell.colSpan = 10;
+             cell.innerHTML = ""
+
+             cell = row.insertCell(1);
              cell.innerHTML = div_form_replay.innerHTML;
              form_replay.id = "form-replies";
              input_tag_id.id = "input_tag_id";
-            parent_id.id = "parent_id";
-             cell.colSpan = 100;
-
-            console.log("finish show comment______");
-
-    }}
+             parent_id.id = "parent_id";
+             cell.colSpan = 90;
+        }
+    }
 
     var comment_tr;
     var newrow;
@@ -185,11 +179,10 @@ function showComments(comments, tag_id){
 
     for (i=comments.length-1; i>=0;i--){
         //adding replies
-        console.log("start show replay "+i+" body: "+comments[i].fields.body)
+
         if ( comments[i].fields.is_reply ){
             replay_id = comments[i].pk
             parent_id = comments[i].fields.parent;
-            // console.log("parent_id: "+parent_id)
             comment_tr = document.getElementById(parent_id);
             newrow = document.createElement("tr")
             newrow.className = "display-none"
@@ -200,29 +193,36 @@ function showComments(comments, tag_id){
             cell.colSpan = 10
 
             cell = newrow.insertCell(1);
-            cell.innerHTML = comments[i].fields.body
-            cell.style.wordWrap = "break-word"
+            table_comment = document.createElement("table");
+            table_comment.className ="table table-borderless table-sm"
+            row_comment = table_comment.insertRow(0);
+            cell_comment = row_comment.insertCell(0);
+            cell_comment.innerHTML = "<b>"+comments[i].fields.creator_name+"</b>";
+
+            row_comment = table_comment.insertRow(1);
+            cell_comment = row_comment.insertCell(0);
+            cell_comment.innerHTML = comments[i].fields.body;
+            cell_comment.style.wordWrap = "break-word";
+
+            cell.appendChild(table_comment)
             cell.colSpan = 80
 
             cell = newrow.insertCell(2);
             div_delete = document.createElement("div");
             div_delete.className = "clickable";
-            div_delete.onclick = function (){
-                delete_comment(tag_id,replay_id);
-            }
+
+            var num = tag_id
             if(user_id == comments[i].fields.creator){
-                console.log("Im the creator!!")
-                div_delete.innerHTML = "<i class='fa fa-trash' aria-hidden='true'></i>"
+                div_delete.innerHTML = "<i class='fa fa-trash' aria-hidden='true' onclick='delete_comment("+num+","+replay_id+")'></i>"
             }else{
-                console.log("Im not the creator!!")
                 div_delete.innerHTML = ""
             }
 
             cell.appendChild(div_delete) ;
             cell.colSpan = 10;
+            cell.style.paddingTop = "30px";
 
              comment_tr.parentNode.insertBefore(newrow, comment_tr.nextSibling);
-            console.log("finish show replay______")
 
         }
 
@@ -238,7 +238,6 @@ function showComments(comments, tag_id){
         }
     })
 
-    console.log("finish show comment!");
 }
 
 
@@ -269,12 +268,9 @@ function sendCommentsRequest(tagId){
         dataType: 'json',
         complete: function (data) {
             const statusCode = data.status
-            console.log(statusCode)
             if (statusCode === 200 || statusCode == 201) {
-                 // console.log(data.responseJSON.comments_list)
                 var comments = JSON.parse(data.responseJSON.comments_list)
                 showComments(comments, data.responseJSON.tag_id)
-                // console.log("tag_id: "+data.responseJSON.tag_id)
                 commentForm(tagId)
             }
             if (statusCode === 204) {
@@ -285,6 +281,7 @@ function sendCommentsRequest(tagId){
         }
         })
 }
+
 $(function(){
   $('form[name=form-comments]').submit(function(){
     $.post($(this).attr('action'), $(this).serialize(), function(jsonData) {

@@ -1,6 +1,6 @@
-    // if ( window.history.replaceState ) {
-    //     window.history.replaceState( null, null, window.location.href );
-    // }
+    if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+    }
 
 
 function updateTagCount(toClick, toDisable, counter, rating) {
