@@ -31,6 +31,7 @@
                 <li class="nav-item"><a href="{% url 'accounts:register' %}" class="nav-link">Register</a></li>
                 <li class="nav-item"><a href="{% url 'admin:index' %}" class="nav-link">Admin</a></li>
 
+                {% if not 'videos/' in request.path %}
                 <form class="navbar-form navbar-left" role="search">
                     <div class="form-group">
                         <input type="text" class="form-control" placeholder="Search" id="search-bar"
@@ -40,6 +41,7 @@
                         <span class="glyphicon glyphicon-search"></span>
                     </button>
                 </form>
+                {% endif %}
 
             </ul>
             <ul class="nav navbar-nav flex-row justify-content-between ml-auto">
