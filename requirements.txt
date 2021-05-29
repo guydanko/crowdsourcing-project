@@ -1,4 +1,4 @@
-asgiref==3.3.1
+asgiref==3.3.4
 Django==3.1.7
 Pillow==8.2.0
 psycopg2==2.8.6
@@ -10,3 +10,10 @@ django-durationwidget==1.0.5
 youtube-transcript-api==0.4.1
 django-crispy-forms==1.11.2
 youtube-dl==2021.4.17
+
+tensorflow-hub==0.12.0
+celery==5.0.5
+djangorestframework==3.12.4
+nltk==3.6.2
+FRAKE-extractor==1.0.1
+PyDictionary==2.0.1

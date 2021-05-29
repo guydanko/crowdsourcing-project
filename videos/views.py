@@ -1,5 +1,4 @@
 import json
-
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotAllowed, JsonResponse
 from django.shortcuts import render
 from django.core import serializers
@@ -14,7 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 def video(request, identifier):
     video = get_video_by_id(video_id=identifier)
-    tags = get_all_tags_for_video(video)
+    tags = get_tags_for_video(video, request.user.id)
     user_tags = get_all_user_tags_for_video(user_id=request.user.id, video_id=identifier)
     show_all_tags = True
     if request.method == 'GET':
@@ -25,15 +24,19 @@ def video(request, identifier):
                 show_all_tags = False
     if request.method == 'POST':
         form = VideoTaggingForm(request.POST)
-        if form.is_valid():
+
+        if calculate_number_of_allowed_tags_per_video(video, request.user) == 0:
+            messages.error(request, "You can't tag more, as you reached your own maximum, "
+                                    "please wait for your tags to be reviewed by others")
+        elif form.is_valid():
             # create a new model in the data base with the filled form information
             start_time = form.cleaned_data.get("start")
             end_time = form.cleaned_data.get("end")
             description = form.cleaned_data.get("description")
-            create_tagging(video, request.user, start_time, end_time, description)
+            create_tag(video, request.user, start_time, end_time, description)
             return HttpResponseRedirect(request.path_info)
         else:
-            messages.error(request, 'Invalid form')
+            messages.error(request, 'One of the values you have entered are Illegal, Please try Again')
 
     return render(request, 'videos/video.html',
                   {'obj': video, 'form': VideoTaggingForm(), 'tags': tags, 'user_tags': user_tags,
@@ -62,16 +65,6 @@ def vote(request):
         return JsonResponse({'tag_rating': tag.rating_value}, status=status_code)
 
 
-def delete_tag(request):
-    if request.method == 'POST':
-        tag_id = request.POST['tag_id']
-
-        remove_user_tag(tag_id=tag_id)
-        status_code = 200
-
-        return JsonResponse({}, status=status_code)
-
-
 def search_videos(request):
     if request.method == 'GET':
         search_term = request.GET['search_term']
@@ -98,9 +91,15 @@ def create_comment(request):
         if len(comment_body) > 400:
             messages.error(request, 'Comment text exceeded maximum length')
         else:
+            parent_id = int(data['parent_id']) if 'parent_id' in data else None
+            # Spamming validation
+            if parent_id and not is_user_able_to_post_reply_on_comment(request.user, tag, parent_id):
+                messages.error(request, "You can't post more replys for this comment")
+            elif not parent_id and not is_user_able_to_post_comment_on_tag(request.user, tag):
+                messages.error(request, "You can't post more comments for this tag")
+
             comment = Comment(body=comment_body, tag=tag, video=tag.video,
                               create=User.objects.get(id=request.user.id))
-            parent_id = int(data['parent_id']) if 'parent_id' in data else None
             if parent_id:
                 # reply comment
                 parent_comment = Comment.objects.get(id=parent_id)
