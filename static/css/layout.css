@@ -14,7 +14,6 @@ body {
     height: 100%;
 }
 
-
 html {
     font-size: large;
     line-height: normal;
@@ -53,3 +52,4 @@ div:empty{
 .button-view {
     font-size: 15px;
 }
+

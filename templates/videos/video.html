@@ -61,7 +61,7 @@
                                                 {% if tag.creator.id == user.id %}
                                                     <div class="clickable delete-tag" onclick="deleteTag({{ tag.id }})">
                                                         <i class="fa fa-trash" aria-hidden="true"></i>
-                                                        </a>
+{#                                                        </a>#}
 
                                                     </div>
                                                 {% endif %}
@@ -211,19 +211,20 @@
                             <table class="table bg-light border rounded" id="comments_table">
                             </table>
 
-                            <div class="container p-2 bg-light border rounded" id="no-comments"></div>
+                            <div class="container p-2 bg-light border" id="no-comments"></div>
                         </div>
                     </div>
                     <div class="display-none" id="div_form_replay">
-                        <form name="form-replies" action="{% url 'videos:create_comment' %}" method="POST">
+                        <form name ="form-replies" id="form-replies" action="{% url 'videos:create_comment' %}" method="POST">
                             {% csrf_token %}
-                            <div class="form-group">
-                                <label htmlFor="body"></label>
-                                <input type="text" name="body" className="form-control" required>
-                            </div>
+                            <div class="input-group input-group-sm">
+                            <label htmlFor="body"></label>
+                            <input type="text" name="body" class="form-control" required>
+                            <input type="button"  name="submit" value="Replay" onclick="create_reply(this.form)"  id="button_replay">
+                                </div>
+
                             <input type="hidden" name="tag_id" id="input_tag_id">
                             <input type="hidden" name="parent_id" id="parent_id">
-                            <input type="submit" value="Replay" className="btn btn-primary">
                         </form>
                     </div>
                     <div class="parent">
@@ -251,7 +252,7 @@
                             <form action="." method="post">
                                 {% csrf_token %}
                                 <div class="form-row">
-                                    <div class="form-group col-md-6 mb-0">
+                                    <div class="form-group col-md-6 mb-5">
                                         {{ form.start|as_crispy_field }}
                                     </div>
                                     <div class="form-group col-md-6 mb-0">
@@ -275,6 +276,7 @@
     <link rel="stylesheet" href="{% static "css/videos.css" %}">
     <script type="text/javascript">
         var video_pk = {{ obj.id }};
+        var user_id = {{ user.id }};
     </script>
     <script src="{% static 'js/controlVideo.js' %}"></script>
     <script src="{% static 'js/tagControl.js' %}"></script>
