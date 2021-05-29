@@ -212,7 +212,7 @@ def get_comment_by_id(comment_id) -> Comment:
 def get_serialized_comments_for_tag(tag) -> (Dict, int):
     comments = serializers.serialize('json', get_all_comments_for_tag(tag))
     if len(comments) == 2:
-        status_code = 200
+        status_code = 204
     else:
         status_code = 201
     return comments, status_code

@@ -33,13 +33,13 @@ def video(request, identifier):
             start_time = form.cleaned_data.get("start")
             end_time = form.cleaned_data.get("end")
             description = form.cleaned_data.get("description")
-            create_tag(video, request.user, start_time, end_time, description)
             show_all_tags = form.cleaned_data.get("showAllTags")
             errors = create_tag(video, request.user, start_time, end_time, description)
-            if len(errors) == 0:
+            if not errors:
                 messages.success(request, "Tag submitted successfully")
-            for error in errors:
-                messages.error(request, error)
+            else:
+                for error in errors:
+                    messages.error(request, error)
         else:
             messages.error(request, 'One of the values you have entered are Illegal, Please try Again')
 
