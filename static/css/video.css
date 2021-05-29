@@ -1,6 +1,7 @@
 .video-page {
     max-width: 93%
 }
+
 .tag-form {
     padding-right: 50px;
     padding-left: 50px;
@@ -16,27 +17,20 @@
 
 .table-responsive {
     max-height: 440px;
+    height: 100%;
 
 }
 
 .table {
     table-layout: fixed;
     margin: 0;
+    height: 100%;
     /*border: cadetblue;*/
-}
-
-
-.table tr:hover {
-    background-color: #EBEBEB;
-    cursor: pointer;
 }
 
 .parent{
     padding-top: 15px;
 }
-
-
-
 
 
 .fa-thumbs-down {
@@ -68,6 +62,7 @@
     /*border: aqua;*/
     margin: 0;
 }
+
 tr.inner-row {
     border: none;
     line-height: 12px;
@@ -98,28 +93,34 @@ tbody.inner-table-body:hover{
 }
 
 td.topnav{
-    background-color: black;
+    background-color: #b8b8b8;
     font-weight: lighter;
     color: white;
 }
+
 td.topnav.active{
-    background-color: #656565;
+    background-color: black;
     font-weight: bold;
     color: white;
 }
+
 td.topnav:hover{
     font-weight: bolder;
     cursor: pointer;
 }
+
 #allTagBody.inactive{
     display: none;
 }
+
 #myTagBody.inactive{
     display: none;
 }
+
 #allTagBody.active{
     background-color: azure;
 }
+
 #myTagBody.active{
     background-color: azure;
 }
@@ -127,6 +128,7 @@ td.topnav:hover{
 .display-none{
     display: none;
 }
-#comments_table{
 
+input[type=time]{
+    min-width: 160px;
 }

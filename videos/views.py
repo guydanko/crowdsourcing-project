@@ -34,7 +34,12 @@ def video(request, identifier):
             end_time = form.cleaned_data.get("end")
             description = form.cleaned_data.get("description")
             create_tag(video, request.user, start_time, end_time, description)
-            return HttpResponseRedirect(request.path_info)
+            show_all_tags = form.cleaned_data.get("showAllTags")
+            errors = create_tag(video, request.user, start_time, end_time, description)
+            if len(errors) == 0:
+                messages.success(request, "Tag submitted successfully")
+            for error in errors:
+                messages.error(request, error)
         else:
             messages.error(request, 'One of the values you have entered are Illegal, Please try Again')
 
@@ -65,6 +70,16 @@ def vote(request):
         return JsonResponse({'tag_rating': tag.rating_value}, status=status_code)
 
 
+def delete_tag(request):
+    if request.method == 'POST':
+        tag_id = request.POST['tag_id']
+
+        remove_user_tag(tag_id=tag_id)
+        status_code = 200
+
+        return JsonResponse({}, status=status_code)
+
+
 def search_videos(request):
     if request.method == 'GET':
         search_term = request.GET['search_term']
@@ -84,10 +99,13 @@ def search_videos(request):
 @csrf_exempt
 @api_view(['POST'])
 def create_comment(request):
+    print("start create_comment!!")
     if request.method == 'POST':
         data = request.POST
         tag = get_tag_by_id(data['tag_id'])
         comment_body = data['body']
+        print("in view!!")
+        print(request.user.username)
         if len(comment_body) > 400:
             messages.error(request, 'Comment text exceeded maximum length')
         else:
@@ -99,7 +117,7 @@ def create_comment(request):
                 messages.error(request, "You can't post more comments for this tag")
 
             comment = Comment(body=comment_body, tag=tag, video=tag.video,
-                              create=User.objects.get(id=request.user.id))
+                              creator=request.user, creator_name=request.user.username)
             if parent_id:
                 # reply comment
                 parent_comment = Comment.objects.get(id=parent_id)
@@ -109,7 +127,7 @@ def create_comment(request):
             messages.success(request, 'Comment saved successfully')
 
         comments, status_code = get_serialized_comments_for_tag(tag)
-        return JsonResponse({'comments_list': comments}, status=status_code)
+        return JsonResponse({'comments_list': comments, 'tag_id': data['tag_id']}, status=status_code)
 
 
 @csrf_exempt
@@ -118,6 +136,9 @@ def delete_comment(request):
     if request.method == 'POST':
         tag = get_tag_by_id(request.POST['tag_id'])
         comment = get_comment_by_id(request.POST['comment_id'])
+        print(comment.creator_name)
+        print(request.user.username)
+        print(comment.body)
         if comment.creator.id == request.user.id:
             try:
                 comment.delete()

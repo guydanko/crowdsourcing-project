@@ -46,6 +46,12 @@ def get_tags_for_video_in_time_range(video, start_seconds) -> List[Tagging]:
         start_seconds - SIMILARITY_DELTA, start_seconds + SIMILARITY_DELTA))
 
 
+def get_all_user_tags_for_video(user_id, video_id) -> List[Tagging]:
+    return Tagging.objects.filter(creator__id=user_id, video_id=video_id).order_by('start__hour',
+                                                                                   'start__minute',
+                                                                                   'start__second')
+
+
 def get_all_ratings_for_tag(tagging) -> List[UserRating]:
     return UserRating.objects.filter(tagging=tagging)
 

@@ -1,3 +1,8 @@
+    if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+    }
+
+
 function updateTagCount(toClick, toDisable, counter, rating) {
     counter.innerText = rating
     if (toClick.classList.contains("active")) {
@@ -81,7 +86,7 @@ document.getElementById("myTags").addEventListener("click", function () {
         document.getElementById("allTagBody").className = "inactive"
         this.classList.add("active")
         document.getElementById("myTagBody").className = "active"
-        document.getElementById("formShowAllTags").value = "False"
+        document.getElementById("id_showAllTags").value = "False"
     }
 
 });
@@ -92,7 +97,8 @@ document.getElementById("allTags").addEventListener("click", function () {
         document.getElementById("myTagBody").className = "inactive"
         this.classList.add("active")
         document.getElementById("allTagBody").className = "active"
-        document.getElementById("formShowAllTags").value = "True"
+        document.getElementById("id_showAllTags").value = "True"
     }
 
 });
+
