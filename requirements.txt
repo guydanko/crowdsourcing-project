@@ -10,3 +10,4 @@ django-durationwidget==1.0.5
 youtube-transcript-api==0.4.1
 django-crispy-forms==1.11.2
 youtube-dl==2021.4.17
+bootstrap_datepicker_plus==3.0.5
