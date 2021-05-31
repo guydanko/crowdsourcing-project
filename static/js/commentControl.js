@@ -1,3 +1,5 @@
+
+//post request for replies on comments
 function create_reply(oForm) {
 
     var body = oForm.elements["body"].value;
@@ -34,6 +36,7 @@ function create_reply(oForm) {
     })
 }
 
+//post request for deleting a comment on a tag
 function delete_comment(tag_id, comment_id) {
 
     $.ajax({
@@ -63,7 +66,7 @@ function delete_comment(tag_id, comment_id) {
 
 }
 
-
+//build dynamically the comments table for a tag
 function showComments(comments, tag_id) {
 
     var div = document.getElementById("no-comments");
@@ -241,7 +244,7 @@ function showComments(comments, tag_id) {
 
 }
 
-
+//adding dynamically form for adding comments on a tag
 function commentForm(tag_id) {
 
     var input_id = document.getElementById("input_id")
@@ -250,6 +253,7 @@ function commentForm(tag_id) {
     div.classList.remove("display-none");
 }
 
+//adding dynamically message - "No comments for this tag"
 function noComments() {
     var table = document.getElementById("comments_table");
     table.innerHTML = "";
@@ -257,6 +261,7 @@ function noComments() {
     div.innerHTML = "No comments for this tag";
 }
 
+// post request for the comments on a tag
 function sendCommentsRequest(tagId) {
 
     $.ajax({
@@ -271,10 +276,12 @@ function sendCommentsRequest(tagId) {
             const statusCode = data.status
             if (statusCode === 200 || statusCode == 201) {
                 var comments = JSON.parse(data.responseJSON.comments_list)
+                //adding the comment form and the comments on the tag
                 showComments(comments, data.responseJSON.tag_id)
                 commentForm(tagId)
             }
             if (statusCode === 204) {
+                //if there are no comments, show a message and the comment form
                 noComments()
                 commentForm(tagId)
             }
@@ -296,6 +303,7 @@ function displayErrors(errors) {
 
 }
 
+//submitting comment on a tag
 $(function () {
     $('form[name=form-comments]').submit(function () {
         $.post($(this).attr('action'), $(this).serialize(), function (jsonData) {

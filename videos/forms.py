@@ -17,18 +17,17 @@ class VideoTaggingForm(forms.ModelForm):
         self.fields["end"].widget = TimePickerInput(format='%H:%M:%S')
         self.fields["end"].input_formats = ['%H:%M:%S']
         self.fields["end"].widget.attrs.update({'value': '00:00:00'})
+        self.fields["end"].widget.config['options']['showTodayButton'] = False
+        self.fields["end"].widget.config['options']['showClear'] = False
+
         self.fields["start"].widget = TimePickerInput(format='%H:%M:%S')
         self.fields["start"].input_formats = ['%H:%M:%S']
         self.fields["start"].widget.attrs.update({'value': '00:00:00'})
         self.fields["start"].widget.config['options']['showTodayButton'] = False
         self.fields["start"].widget.config['options']['showClear'] = False
-        self.fields["end"].widget.config['options']['showTodayButton'] = False
-        self.fields["end"].widget.config['options']['showClear'] = False
+
 
 
 class TimeInput(forms.TimeInput):
     input_type = "time"
 
-    # def __init__(self, **kwargs):
-    #     kwargs["format"] = "%H:%M:%S"
-    #     super().__init__(**kwargs)
