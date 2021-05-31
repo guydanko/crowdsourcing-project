@@ -145,7 +145,7 @@ class Comment(models.Model):
     video = models.ForeignKey(Video, on_delete=models.CASCADE)
     tag = models.ForeignKey(Tagging, related_name='comments', on_delete=models.CASCADE)
     creator = models.ForeignKey(User, on_delete=models.CASCADE)
-    creator_name = models.TextField(max_length=150)
+    creator_name = models.TextField(max_length=150, default="")
     body = models.TextField(max_length=50)
     creation_date = models.DateTimeField(auto_now_add=True)
     parent = models.ForeignKey('self', null=True, blank=True, related_name='replies', on_delete=models.CASCADE)

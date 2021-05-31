@@ -2,6 +2,10 @@
     max-width: 93%
 }
 
+.video-name {
+   padding-top: 20px;
+}
+
 .tag-form {
     padding-right: 50px;
     padding-left: 50px;

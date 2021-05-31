@@ -3,7 +3,10 @@
 {% load embed_video_tags %}
 {% load custom_tags %}
 {% load static %}
+
+
 {% block body_block %}
+    {{ form.media }}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <div class="container-fluid home ">
         <div class="container bg-white p-3 video-page">
@@ -15,7 +18,10 @@
                             {% video obj.video %}
                         </div>
                     </div>
-                    <span class="badge bg-secondary text-light">{{ obj.duration|time:'H:i:s' }}</span>
+                    <div class="video-name">
+                    <h5>{{ obj.name }}</h5>
+                        </div>
+{#                    <span class="badge bg-secondary text-light">{{ obj.duration|time:'H:i:s' }}</span>#}
                 </div>
 
                 <div class="container col-md-6 table-responsive">
@@ -219,8 +225,8 @@
                             {% csrf_token %}
                             <div class="input-group input-group-sm">
                             <label htmlFor="body"></label>
-                            <input type="text" name="body" class="form-control" required>
-                                <input type="button"  name="submit" value="Reply" onclick="create_reply(this.form)"  id="button_replay">
+                            <input type="text" name="body" id="reply-body" class="form-control" required>
+                            <input type="button"  name="submit" value="Reply" onclick="create_reply(this.form)"  id="button_replay">
                                 </div>
 
                             <input type="hidden" name="tag_id" id="input_tag_id">
@@ -234,10 +240,10 @@
                                 {% csrf_token %}
                                 <div class="form-group">
                                     <label for="body"><h4>Add new comment:</h4></label>
-                                    <input type="text" name="body" class="form-control" required>
+                                    <input type="text" name="body" id="new-comment-body" class="form-control" required>
                                 </div>
                                 <input type="hidden" name="tag_id" id="input_id">
-                                <input type="submit" value="Create comment" class="btn btn-primary">
+                                <input type="submit" value="Create comment"  class="btn btn-primary">
                             </form>
                         </div>
                     </div>
