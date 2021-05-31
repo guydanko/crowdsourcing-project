@@ -1,9 +1,12 @@
 $(document).ready(function () {
-    const err_string = user_messages.join('\n');
-    bootbox.alert({
+    if (user_messages.length > 0) {
+        const err_string = user_messages.join('\n');
+        bootbox.alert({
 
-        message: err_string,
-        centerVertical: true
+            message: err_string,
+            centerVertical: true
 
-    }).find("div.modal-content").addClass("confirmWidth");
+        }).find("div.modal-content").addClass("confirmWidth");
+    }
+
 })

@@ -222,8 +222,8 @@
                             {% csrf_token %}
                             <div class="input-group input-group-sm">
                             <label htmlFor="body"></label>
-                            <input type="text" name="body" class="form-control" required>
-                            <input type="button"  name="submit" value="Replay" onclick="create_reply(this.form)"  id="button_replay">
+                            <input type="text" name="body" id="reply-body" class="form-control" required>
+                            <input type="button"  name="submit" value="Reply" onclick="create_reply(this.form)"  id="button_replay">
                                 </div>
 
                             <input type="hidden" name="tag_id" id="input_tag_id">
@@ -237,10 +237,10 @@
                                 {% csrf_token %}
                                 <div class="form-group">
                                     <label for="body"><h4>Add new comment:</h4></label>
-                                    <input type="text" name="body" class="form-control" required>
+                                    <input type="text" name="body" id="new-comment-body" class="form-control" required>
                                 </div>
                                 <input type="hidden" name="tag_id" id="input_id">
-                                <input type="submit" value="Create comment" class="btn btn-primary">
+                                <input type="submit" value="Create comment"  class="btn btn-primary">
                             </form>
                         </div>
                     </div>

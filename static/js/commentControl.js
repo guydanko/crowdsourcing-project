@@ -1,4 +1,4 @@
-function create_reply(oForm){
+function create_reply(oForm) {
 
     var body = oForm.elements["body"].value;
     var tag_id = oForm.elements["tag_id"].value;
@@ -21,18 +21,20 @@ function create_reply(oForm){
                 var comments = JSON.parse(data.responseJSON.comments_list);
                 showComments(comments, tag_id);
                 commentForm(tag_id);
+
             }
             if (statusCode === 204) {
                 noComments()
                 commentForm(tag_id)
             }
-
+            displayErrors(JSON.parse(data.responseJSON.errors))
+            document.getElementById("reply-body").value = ""
 
         }
     })
 }
 
-function delete_comment(tag_id, comment_id){
+function delete_comment(tag_id, comment_id) {
 
     $.ajax({
         url: '/videos/delete_comment/',
@@ -40,7 +42,7 @@ function delete_comment(tag_id, comment_id){
         data: {
             csrfmiddlewaretoken: window.CSRF_TOKEN,
             'tag_id': tag_id,
-            'comment_id' : comment_id
+            'comment_id': comment_id
         },
         dataType: 'json',
         complete: function (data) {
@@ -62,8 +64,7 @@ function delete_comment(tag_id, comment_id){
 }
 
 
-
-function showComments(comments, tag_id){
+function showComments(comments, tag_id) {
 
     var div = document.getElementById("no-comments");
     div.innerHTML = ""
@@ -75,7 +76,7 @@ function showComments(comments, tag_id){
     header.style.color = "#FFFFFF";
 
     var row = header.insertRow(0);
-    row.style.backgroundColor ="#000000";
+    row.style.backgroundColor = "#000000";
 
     var cell = row.insertCell(0);
     cell.innerHTML = "<b>Comments</b>";
@@ -90,7 +91,7 @@ function showComments(comments, tag_id){
 
     var input_tag_id = document.getElementById("input_tag_id");
     input_tag_id.setAttribute("value", tag_id);
-    input_tag_id.id = "input_tag_id-"+tag_id;
+    input_tag_id.id = "input_tag_id-" + tag_id;
 
     var parent_id;
     var div_form_replay;
@@ -100,9 +101,9 @@ function showComments(comments, tag_id){
     var row_comment;
     var cell_comment;
 
-    for (i=comments.length-1; i>=0;i--) {
+    for (i = comments.length - 1; i >= 0; i--) {
         //adding comments
-        if (! comments[i].fields.is_reply){
+        if (!comments[i].fields.is_reply) {
             var form_id = comments[i].pk;
             row = tbody.insertRow(0);
             row.id = "comment_header"
@@ -110,10 +111,10 @@ function showComments(comments, tag_id){
 
             cell = row.insertCell(0);
             table_comment = document.createElement("table");
-            table_comment.className ="table table-borderless table-sm"
+            table_comment.className = "table table-borderless table-sm"
             row_comment = table_comment.insertRow(0);
             cell_comment = row_comment.insertCell(0);
-            cell_comment.innerHTML = "<b>"+comments[i].fields.creator_name+"</b>";
+            cell_comment.innerHTML = "<b>" + comments[i].fields.creator_name + "</b>";
 
             row_comment = table_comment.insertRow(1);
             cell_comment = row_comment.insertCell(0);
@@ -126,19 +127,19 @@ function showComments(comments, tag_id){
             cell = row.insertCell(1);
             cell.colSpan = 22;
             cell.style.padding = "30px";
-            cell.innerHTML = "Replies  "+"<i class='showMore fa fa-angle-double-right'></i>"
+            cell.innerHTML = "Replies  " + "<i class='showMore fa fa-angle-double-right'></i>"
 
-            cell =row.insertCell(2);
+            cell = row.insertCell(2);
             div_delete = document.createElement("div");
             div_delete.className = "clickable";
 
             var num = tag_id
-            if(user_id == comments[i].fields.creator){
-                div_delete.innerHTML = "<i class='fa fa-trash' aria-hidden='true' onclick='delete_comment("+num+","+form_id+")'></i>"
-            }else{
+            if (user_id == comments[i].fields.creator) {
+                div_delete.innerHTML = "<i class='fa fa-trash' aria-hidden='true' onclick='delete_comment(" + num + "," + form_id + ")'></i>"
+            } else {
                 div_delete.innerHTML = ""
             }
-            cell.appendChild(div_delete) ;
+            cell.appendChild(div_delete);
             cell.colSpan = 10;
             cell.style.paddingTop = "30px";
 
@@ -148,28 +149,28 @@ function showComments(comments, tag_id){
             row.style.backgroundColor = "light"
 
 
-             parent_id = document.getElementById("parent_id") ;
-             parent_id.setAttribute("value", row.id);
-            parent_id.id = "parent_id-"+form_id
+            parent_id = document.getElementById("parent_id");
+            parent_id.setAttribute("value", row.id);
+            parent_id.id = "parent_id-" + form_id
 
             form_replay = document.getElementById("form-replies");
-            form_replay.id = "reply-"+row.id;
-             div_form_replay = document.getElementById("div_form_replay");
+            form_replay.id = "reply-" + row.id;
+            div_form_replay = document.getElementById("div_form_replay");
 
-             row = tbody.insertRow(2);
-             row.className = "display-none";
-             row.style.backgroundColor = "light";
+            row = tbody.insertRow(2);
+            row.className = "display-none";
+            row.style.backgroundColor = "light";
 
-             cell = row.insertCell(0);
-             cell.colSpan = 10;
-             cell.innerHTML = ""
+            cell = row.insertCell(0);
+            cell.colSpan = 10;
+            cell.innerHTML = ""
 
-             cell = row.insertCell(1);
-             cell.innerHTML = div_form_replay.innerHTML;
-             form_replay.id = "form-replies";
-             input_tag_id.id = "input_tag_id";
-             parent_id.id = "parent_id";
-             cell.colSpan = 90;
+            cell = row.insertCell(1);
+            cell.innerHTML = div_form_replay.innerHTML;
+            form_replay.id = "form-replies";
+            input_tag_id.id = "input_tag_id";
+            parent_id.id = "parent_id";
+            cell.colSpan = 90;
         }
     }
 
@@ -177,10 +178,10 @@ function showComments(comments, tag_id){
     var newrow;
     var replay_id;
 
-    for (i=comments.length-1; i>=0;i--){
+    for (i = comments.length - 1; i >= 0; i--) {
         //adding replies
 
-        if ( comments[i].fields.is_reply ){
+        if (comments[i].fields.is_reply) {
             replay_id = comments[i].pk
             parent_id = comments[i].fields.parent;
             comment_tr = document.getElementById(parent_id);
@@ -194,10 +195,10 @@ function showComments(comments, tag_id){
 
             cell = newrow.insertCell(1);
             table_comment = document.createElement("table");
-            table_comment.className ="table table-borderless table-sm"
+            table_comment.className = "table table-borderless table-sm"
             row_comment = table_comment.insertRow(0);
             cell_comment = row_comment.insertCell(0);
-            cell_comment.innerHTML = "<b>"+comments[i].fields.creator_name+"</b>";
+            cell_comment.innerHTML = "<b>" + comments[i].fields.creator_name + "</b>";
 
             row_comment = table_comment.insertRow(1);
             cell_comment = row_comment.insertCell(0);
@@ -212,27 +213,27 @@ function showComments(comments, tag_id){
             div_delete.className = "clickable";
 
             var num = tag_id
-            if(user_id == comments[i].fields.creator){
-                div_delete.innerHTML = "<i class='fa fa-trash' aria-hidden='true' onclick='delete_comment("+num+","+replay_id+")'></i>"
-            }else{
+            if (user_id == comments[i].fields.creator) {
+                div_delete.innerHTML = "<i class='fa fa-trash' aria-hidden='true' onclick='delete_comment(" + num + "," + replay_id + ")'></i>"
+            } else {
                 div_delete.innerHTML = ""
             }
 
-            cell.appendChild(div_delete) ;
+            cell.appendChild(div_delete);
             cell.colSpan = 10;
             cell.style.paddingTop = "30px";
 
-             comment_tr.parentNode.insertBefore(newrow, comment_tr.nextSibling);
+            comment_tr.parentNode.insertBefore(newrow, comment_tr.nextSibling);
 
         }
 
     }
 
-    $(".showMore").click(function() {
+    $(".showMore").click(function () {
         var tr = $(this).parent().parent().nextUntil('#comment_header');
         $(this).toggleClass('fa-angle-double-right fa-angle-double-down')
         if (tr.is(".display-none")) {
-        tr.removeClass('display-none');
+            tr.removeClass('display-none');
         } else {
             tr.addClass('display-none');
         }
@@ -241,7 +242,7 @@ function showComments(comments, tag_id){
 }
 
 
-function commentForm(tag_id){
+function commentForm(tag_id) {
 
     var input_id = document.getElementById("input_id")
     input_id.setAttribute("value", tag_id)
@@ -249,16 +250,16 @@ function commentForm(tag_id){
     div.classList.remove("display-none");
 }
 
-function noComments(){
+function noComments() {
     var table = document.getElementById("comments_table");
     table.innerHTML = "";
     var div = document.getElementById("no-comments");
     div.innerHTML = "No comments for this tag";
 }
 
-function sendCommentsRequest(tagId){
+function sendCommentsRequest(tagId) {
 
-        $.ajax({
+    $.ajax({
         url: '/videos/comments/',
         type: 'POST',
         data: {
@@ -279,17 +280,32 @@ function sendCommentsRequest(tagId){
             }
 
         }
-        })
+    })
 }
 
-$(function(){
-  $('form[name=form-comments]').submit(function(){
-    $.post($(this).attr('action'), $(this).serialize(), function(jsonData) {
-        showComments(JSON.parse(jsonData.comments_list),jsonData.tag_id)
-        commentForm(jsonData.tag_id)
-    }, "json");
-    return false;
-  });
+function displayErrors(errors) {
+    if (errors.length > 0) {
+        const err_string = errors.join('\n');
+        bootbox.alert({
+
+            message: err_string,
+            centerVertical: true
+
+        }).find("div.modal-content").addClass("confirmWidth");
+    }
+
+}
+
+$(function () {
+    $('form[name=form-comments]').submit(function () {
+        $.post($(this).attr('action'), $(this).serialize(), function (jsonData) {
+            showComments(JSON.parse(jsonData.comments_list), jsonData.tag_id)
+            document.getElementById("new-comment-body").value = ""
+            commentForm(jsonData.tag_id)
+            displayErrors(JSON.parse(jsonData.errors))
+        }, "json");
+        return false;
+    });
 })
 
 

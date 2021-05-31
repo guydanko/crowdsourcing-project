@@ -1,3 +1,5 @@
+import json
+
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.contrib import messages
@@ -98,10 +100,12 @@ def create_comment(request):
         data = request.POST
         tag = get_tag_by_id(data['tag_id'])
         comment_body = data['body']
+        errors = []
         print("in view!!")
         print(request.user.username)
+        parent_id = int(data['parent_id']) if 'parent_id' in data else None
         if len(comment_body) > 400:
-            messages.error(request, 'Comment text exceeded maximum length')
+            errors.append('Comment text exceeded maximum length')
         else:
             comment = Comment(body=comment_body, tag=tag, video=tag.video,
                               creator=request.user, creator_name=request.user.username)
@@ -112,10 +116,12 @@ def create_comment(request):
                 comment.parent = parent_comment
                 comment.is_reply = True
             comment.save()
-            messages.success(request, 'Comment saved successfully')
+            # messages.success(request, 'Comment saved successfully')
 
         comments, status_code = get_serialized_comments_for_tag(tag)
-        return JsonResponse({'comments_list': comments, 'tag_id': data['tag_id']}, status=status_code)
+        return JsonResponse({'comments_list': comments, 'tag_id': data['tag_id'], 'errors': json.dumps(errors)},
+                            status=status_code,
+                            safe=False)
 
 
 @csrf_exempt
