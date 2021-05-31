@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     'videos',
     'embed_video',
     'crispy_forms',
-    'durationwidget',
     'layout',
     'bootstrap_datepicker_plus',
 ]
