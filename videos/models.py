@@ -13,8 +13,6 @@ from .Utils import *
 sID = "t99ULJjCsaM"
 
 date = datetime.date(1, 1, 1)
-# MAX_START_TO_END_RANGE = dt.combine(date, datetime.time(0, 5, 0)) - \
-#                          dt.combine(date, datetime.time(0, 0, 0))
 
 MAX_START_TO_END_RANGE = 20 * 60
 MIN_START_TO_END_RANGE = 5
@@ -77,9 +75,9 @@ class TaggingValidator:
         if start_in_seconds < 0 or end_in_seconds > video_length_in_seconds:
             errors.append(f'Time out of range')
         if time_range_in_seconds > MAX_START_TO_END_RANGE:
-            errors.append(f'Invalid time range, Maximal valid time range duration is {MAX_START_TO_END_RANGE}')
+            errors.append(f'Invalid time range, maximal valid time range duration is {MAX_START_TO_END_RANGE} seconds')
         if time_range_in_seconds < MIN_START_TO_END_RANGE:
-            errors.append(f'Invalid time range, Minimal valid time range duration is {MIN_START_TO_END_RANGE}')
+            errors.append(f'Invalid time range, minimal valid time range duration is {MIN_START_TO_END_RANGE} seconds')
         return errors
 
 

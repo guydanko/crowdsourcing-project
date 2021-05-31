@@ -5,11 +5,11 @@ from .models import Tagging
 
 
 class VideoTaggingForm(forms.ModelForm):
+    """ Tag form configuration """
     showAllTags = CharField(widget=HiddenInput(), required=False)
 
     class Meta:
         model = Tagging
-        # exclude = ('creator', 'video', 'rating_value', 'date_subscribed')
         fields = ['start', 'end', 'description']
 
     def __init__(self, *args, **kwargs):
@@ -29,7 +29,3 @@ class VideoTaggingForm(forms.ModelForm):
 
 class TimeInput(forms.TimeInput):
     input_type = "time"
-
-    # def __init__(self, **kwargs):
-    #     kwargs["format"] = "%H:%M:%S"
-    #     super().__init__(**kwargs)

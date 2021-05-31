@@ -13,6 +13,7 @@ def get_transcript_score_async(self, json_transcript, user_id, start_time, end_t
     try:
         transcript_score = get_transcript_score(json_transcript, start_seconds, end_seconds, description)
     except Exception:
+        # just in case
         transcript_score = 0
     user = User.objects.get(id=user_id)
     video = Video.objects.get(id=video_id)

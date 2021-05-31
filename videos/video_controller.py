@@ -1,13 +1,9 @@
-import datetime
-
-from .models import *
 from typing import List, Dict
-from pandas import DataFrame
 import pandas as pd
 from django.core import serializers
 from videos.tasks import get_transcript_score_async
 from videos.tag_similarity import is_similar
-from videos.Utils import _normalize_column, calculate_total_rating_score_for_tags
+from videos.Utils import _normalize_column
 from .spammers import *
 
 # TODO DELETE PRIOR SUBMISSION - DEBUGGING PURPOSE
@@ -16,6 +12,7 @@ pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
 
 SIMILARITY_DELTA = 60
+
 
 def get_all_videos() -> List[Video]:
     return Video.objects.all()
@@ -65,6 +62,7 @@ def get_rating_by_user_and_video(user, video) -> UserRating:
 
 
 def get_tags_active_for_user(user, tags) -> List[str]:
+    """ Returns upvote/downvote info for the displayed tags """
     user_rating_for_tags = []
     for tag in tags:
         try:
@@ -94,37 +92,44 @@ def remove_user_tag(tag_id):
 
 
 def create_tag(video, user, start_time, end_time, description):
+    # input validation
     errors = TaggingValidator.get_errors(creator=user, start=start_time, end=end_time, description=description,
                                          video=video)
     if errors:
         return errors
-    tags_for_similarity_test = get_tags_for_video_in_time_range(video, time_to_seconds(start_time))
-    for tag in tags_for_similarity_test:
-        if is_similar(description, tag.description):
-            return ['similar to an existing tag']
     start_seconds = time_to_seconds(start_time)
     end_seconds = time_to_seconds(end_time)
+    # get the existing tags in the relevant time range
+    tags_for_similarity_test = get_tags_for_video_in_time_range(video, start_seconds)
+    for tag in tags_for_similarity_test:
+        if is_similar(description, tag.description):
+            # if tag is similar to an existing tags, adds it as an invalid tag,
+            # which will only be displayed to the creator
+            tag = Tagging.objects.create(creator=user, start=start_time, start_seconds=start_seconds, end=end_time,
+                                         end_seconds=end_seconds, description=description, video=video,
+                                         transcript_score=0, is_invalid=True)
+            tag.save()
+            return ['similar to an existing tag']
 
-    # get_transcript_score_async(video.transcript, user.id, start_time, end_time, description, video.id,
-    #                                      start_seconds, end_seconds)  # sync
-
+    # tag passed all the validations and is ready to receive a transcript score
+    # the function will run asynchronously, brokered by RabbitMQ and managed by Celery
     get_transcript_score_async.delay(video.transcript, user.id, start_time, end_time, description, video.id,
-                                     start_seconds, end_seconds)  # async
+                                     start_seconds, end_seconds)
 
 
-def create_user_rating(creator, tagging, is_upvote):
-    errors = UserRatingValidator.get_errors(creator, tagging, is_upvote)
+def create_user_rating(creator, tag, is_upvote):
+    errors = UserRatingValidator.get_errors(creator, tag, is_upvote)
     if errors:
         return False
-    remove_user_rating_for_tag(creator, tagging)
-    user_rating = UserRating(creator=creator, tagging=tagging, is_upvote=is_upvote, video=tagging.video)
+    remove_user_rating_for_tag(creator, tag)
+    user_rating = UserRating(creator=creator, tagging=tag, is_upvote=is_upvote, video=tag.video)
     if is_upvote:
-        tagging.rating_value += 1
-        tagging.up_votes += 1
+        tag.rating_value += 1
+        tag.up_votes += 1
     else:
-        tagging.rating_value -= 1
-        tagging.down_votes += 1
-    tagging.save()
+        tag.rating_value -= 1
+        tag.down_votes += 1
+    tag.save()
     user_rating.save()
     return True
 

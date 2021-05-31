@@ -15,7 +15,7 @@ MAX_NUMBER_OF_KEYWORDS = 10
 KEYWORDS_NUMBER_LIMITATION_FACTOR = 3
 MATCH_BONUS = 0.2
 
-# stopwords from FRAKES source code
+# stopwords from FRAKE's source code
 stopwords = ['somehow', 'which', 'before', 'three', 'or', 'should', 'might', 'own', 'those', 'to', 'above', 'nor', 'me',
              'seems', 'after', 'empty', 'put', 'that', 'will', 'while', 'across', 'been', 'something', 'ie', 'from',
              'eight', 'herein', 'below', 'into', 'fifty', 'it', 'when', 'for', 'fifteen', 'top', 'hers', 'anyway',
@@ -57,7 +57,8 @@ def clean_transcript_text(text):
 
 
 def clean_user_tag_and_split(text):
-    # remove stopwords and stem
+    """ Responsible for tag preprocessing """
+    # remove clean, remove stopwords and stem
     text = re.sub(r"<.*?>", ' ', text)
     text = re.sub(r"\&\#\;", '', text)
     text = re.sub(r"[\`\'\"\-\/\,\.\!\?\(\)\>\<\=\[\]\{\}]", ' ', text)
@@ -68,10 +69,12 @@ def clean_user_tag_and_split(text):
 
 
 def string_to_tuple(str):
+    # sort for comparison consistency
     return tuple(str.split().sort())
 
 
 def add_synonims(grams, synonims_dictionary):
+    """ Adds synonym n-grams """
     grams_with_added_synonims = []
     for gram in grams:
         for idx, word in enumerate(gram):
@@ -90,6 +93,7 @@ def add_synonims(grams, synonims_dictionary):
 
 
 def pydict_object_to_dict(pydict_object):
+    """ Responsible for synonym dictionary format conversion """
     synonym_dictionary = {}
     for synonims_dictionary in pydict_object:
         if synonims_dictionary:
@@ -99,6 +103,7 @@ def pydict_object_to_dict(pydict_object):
 
 
 def extract_relevant_transcript(start, end, list_of_transcrit_dictionaries):
+    """ Responsible for extracting the relevant info from the transcript """
     cleaned_relevant_transcript = ""
     for transcript_dictionary in list_of_transcrit_dictionaries:
         current_transcript_start = transcript_dictionary["start"]
@@ -110,6 +115,7 @@ def extract_relevant_transcript(start, end, list_of_transcrit_dictionaries):
 
 
 def get_number_of_keywords(cleaned_relevant_transcript, user_tag_text_split):
+    """ Calculates the amount of keywords the model should extract based on the relevant transcript length """
     transcrip_size_key_limitation = max(
         int(len(cleaned_relevant_transcript.split()) / KEYWORDS_NUMBER_LIMITATION_FACTOR), 1)
     number_of_keywords = min(len(user_tag_text_split) * KEYWORDS_NUMBER_MULTIPLIER, MAX_NUMBER_OF_KEYWORDS,
@@ -118,19 +124,22 @@ def get_number_of_keywords(cleaned_relevant_transcript, user_tag_text_split):
 
 
 def reformat_kw(key_phrase_to_rating):
+    """ Reformatting FRAKE's output and normalizing the scores by the max score """
     key_phrases_as_tuples_to_rating = {}
-    sum_of_scores = max(key_phrase_to_rating.values())
+    max_score = max(key_phrase_to_rating.values())
     for phrase, rating in key_phrase_to_rating.items():
         phrase_as_tupe = tuple(sorted([ps.stem(word) for word in phrase.split()]))
         if phrase_as_tupe in key_phrases_as_tuples_to_rating:
-            key_phrases_as_tuples_to_rating[phrase_as_tupe] += rating/sum_of_scores
+            # duplicate elimination
+            key_phrases_as_tuples_to_rating[phrase_as_tupe] += rating / max_score
         else:
-            key_phrases_as_tuples_to_rating[phrase_as_tupe] = rating/sum_of_scores
+            key_phrases_as_tuples_to_rating[phrase_as_tupe] = rating / max_score
     print(key_phrases_as_tuples_to_rating)
     return key_phrases_as_tuples_to_rating
 
 
 def get_n_gram(user_tag_text_split, n):
+    """ Splitting the user tag to n-grams (receives n as an input) """
     n_gram_output = [tuple(sorted(gram)) for gram in ngrams(user_tag_text_split, n)]
     # ignore duplicates
     n_gram_output = set(n_gram_output)
@@ -139,6 +148,7 @@ def get_n_gram(user_tag_text_split, n):
 
 
 def calculate_score(gram_output, key_phrases_as_tuples_to_rating, normalizing_factor):
+    """ Calculates the n-gram score using dot product """
     # normalizing factor should be the length of the original gram before adding the synonyms duplicates
     score = 0
     for gram in gram_output:
@@ -152,8 +162,9 @@ def calculate_score(gram_output, key_phrases_as_tuples_to_rating, normalizing_fa
 
 
 def get_transcript_score(transcript_json, start, end, users_tag_text):
-    list_of_transcrit_dictionaries = json.loads(transcript_json)
-    cleaned_relevant_transcript = extract_relevant_transcript(start, end, list_of_transcrit_dictionaries)
+    """ Putting it all together """
+    list_of_transcript_dictionaries = json.loads(transcript_json)
+    cleaned_relevant_transcript = extract_relevant_transcript(start, end, list_of_transcript_dictionaries)
 
     user_tag_text_split = clean_user_tag_and_split(users_tag_text)
 
@@ -196,6 +207,6 @@ def get_transcript_score(transcript_json, start, end, users_tag_text):
         # 0.4 - 1.0
         final_score = score_avg + MATCH_BONUS
     else:
-        # 0.0 -> no matches at all for transcript
+        # 0.0 -> no matches for transcript
         final_score = score_avg
     return final_score
