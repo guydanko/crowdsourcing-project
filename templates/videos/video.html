@@ -18,7 +18,10 @@
                             {% video obj.video %}
                         </div>
                     </div>
-                    <span class="badge bg-secondary text-light">{{ obj.duration|time:'H:i:s' }}</span>
+                    <div class="video-name">
+                    <h5>{{ obj.name }}</h5>
+                        </div>
+{#                    <span class="badge bg-secondary text-light">{{ obj.duration|time:'H:i:s' }}</span>#}
                 </div>
 
                 <div class="container col-md-6 table-responsive">
