@@ -103,7 +103,6 @@ def create_comment(request):
         errors = []
         print("in view!!")
         print(request.user.username)
-        parent_id = int(data['parent_id']) if 'parent_id' in data else None
         if len(comment_body) > 400:
             errors.append('Comment text exceeded maximum length')
         else:
