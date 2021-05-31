@@ -13,7 +13,7 @@
         <div class="container bg-white p-3 video-page">
             <div class="container-fluid row justify-content-center p-3">
 
-            //adding video to page
+{#            adding video to page#}
                 <div id="youtube-tracking-script"></div>
                 <div class="container col-md-6 bg-light border rounded p-3" id="video-page-div">
                     <div class="video-responsive">
@@ -26,7 +26,7 @@
                     </div>
                 </div>
 
-            //adding table of tags
+{#            adding table of tags#}
                 <div class="container col-md-6 table-responsive">
                     <table class="table bg-light border rounded table-tags">
                         <thead>
@@ -138,14 +138,14 @@
                         {% endfor %}
                         </tbody>
 
-                    // show tab of all the tags, if chosen
+{#                     show tab of all the tags, if chosen#}
                         {% if show_all_tags == True %}
                             <tbody id="myTagBody" class="inactive">
                             {% else %}
                             <tbody id="myTagBody" class="active">
                         {% endif %}
 
-                    // show tab of the user tags, if chosen
+{#                     show tab of the user tags, if chosen#}
                         {% for tag in user_tags %}
                             <tr class="outer-row" id="row-{{ forloop.counter0 }}">
                                 <td colspan="100%">
@@ -205,7 +205,7 @@
 
             <div class="container-fluid row justify-content-center p-3">
                 <div class="container col-md-5">
-                    //hidden comments table of a tag, show if needed
+{#                    hidden comments table of a tag, show if needed#}
                     <div>
                         <div class="container-fluid p-2 comments table-responsive" id="comments">
                             <table class="table bg-light border rounded" id="comments_table">
@@ -214,7 +214,7 @@
                         </div>
                     </div>
 
-                    //hidden form for replies, show if needed
+{#                    hidden form for replies, show if needed#}
                     <div class="display-none" id="div_form_replay">
                         <form name ="form-replies" id="form-replies" action="{% url 'videos:create_comment' %}" method="POST">
                             {% csrf_token %}
@@ -228,7 +228,7 @@
                         </form>
                     </div>
 
-                    //hidden form for adding comments, show if needed
+{#                    hidden form for adding comments, show if needed#}
                     <div class="parent">
                         <div class="container p-2 border rounded bg-light display-none" id="add-comments">
                             <form name="form-comments" action="{% url 'videos:create_comment' %}" method="POST"
@@ -245,7 +245,7 @@
                     </div>
                 </div>
 
-                // form for adding tags
+{#                 form for adding tags#}
                 {% if user.is_authenticated %}
                     <div class="container col-md-5 border rounded bg-light h-50" id="Add-tag">
                     <div class="col-auto p-2 tag-form">
