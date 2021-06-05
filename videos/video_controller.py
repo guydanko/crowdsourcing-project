@@ -1,15 +1,10 @@
 from typing import List, Dict
 import pandas as pd
+from pandas import DataFrame
 from django.core import serializers
 from videos.tasks import get_transcript_score_async
 from videos.tag_similarity import is_similar
-from videos.Utils import _normalize_column
 from .spammers import *
-
-# TODO DELETE PRIOR SUBMISSION - DEBUGGING PURPOSE
-pd.set_option('display.max_rows', 500)
-pd.set_option('display.max_columns', 500)
-pd.set_option('display.width', 1000)
 
 SIMILARITY_DELTA = 60
 
@@ -137,36 +132,35 @@ def create_user_rating(creator, tag, is_upvote):
 def choose_which_tags_to_show(video, user_id: int) -> List[Tagging]:
     # Step 1 - Create data frames
     df = pd.DataFrame(list(Tagging.objects.filter(video=video, is_invalid=False).values(
-        'rating_score', 'start_seconds', 'id', 'transcript_score', 'description', 'is_validated')))
+        'rating_score', 'start_seconds', 'id', 'transcript_score', 'description', 'is_validated', 'total_tag_score')))
     df_user_ratings = pd.DataFrame(list(UserRating.objects.filter(creator=user_id, video=video).values('tagging')))
     if df.empty:
         return []
     if df_user_ratings.empty:
         df_user_ratings = pd.DataFrame({'tagging': []})
-    # Step 2 - split to intervals and get top tags
+    # Step 2 - split to intervals and get top tags per time interval
     df['bucket'] = (df['start_seconds'] / video.bucket_size).astype(int)
     df['Show_Tag'] = 0
     df = df.groupby(by='bucket').apply(_pick_tags_from_time_interval, df_user_ratings=df_user_ratings)
-    # Step 3 - Take id's which has been decided by the algo to show and return their associated tags
+    # Step 3 - Take id's which has been decided to being showed up for the user
     tags_to_show = df[df['Show_Tag'] == 1]['id']
     return Tagging.objects.filter(id__in=tags_to_show).order_by('start__hour', 'start__minute', 'start__second')
 
 
 def _pick_tags_from_time_interval(df: DataFrame, df_user_ratings: DataFrame) -> DataFrame:
-    # Init parameters, min-max normalize the transcript_score, calculate tag score etc...
+    # Init default params
     validated_tags = 3
     random_validated = 2
     potential_tags = 3
     random_tail_tags = 2
+    total_tags = 10
 
-    df = _normalize_column(df, col_name='transcript_score')
-    df = calculate_total_rating_score_for_tags(df)
     df = df.sort_values(by=['is_validated', 'total_tag_score', 'transcript_score'], ascending=False)
     validated_df = df[df['is_validated']]
     not_val_not_vote = df[(~df['id'].isin(df_user_ratings['tagging']) & (df['is_validated'] == False))]
 
     # Case nothing to choose from
-    if df.shape[0] <= 10:
+    if df.shape[0] <= total_tags:
         df['Show_Tag'] = 1
         return df
     # Case we have enough validated
@@ -177,10 +171,11 @@ def _pick_tags_from_time_interval(df: DataFrame, df_user_ratings: DataFrame) -> 
         df_len = not_val_not_vote[len(pot_tags):].shape[0]
         rand_tags = list(not_val_not_vote[len(pot_tags):].sample(n=min(random_tail_tags, df_len))['id'])
         ids_to_show = v_tags + rnd_v_tags + pot_tags + rand_tags
-        # If didn't populated 10 tags, then populate with tags didn't took with best scores
-        if len(ids_to_show) < 10:
+        # If didn't found enough potential tags and enough random tags from the set of tags that aren't validated
+        # and aren't voted by the user, the fill the remaining slots with top tags from the rest of the tags.
+        if len(ids_to_show) < total_tags:
             rest_ids = df[~df['id'].isin(ids_to_show)]
-            ids_to_show.extend(rest_ids[:10 - len(ids_to_show)]['id'])
+            ids_to_show.extend(rest_ids[:total_tags - len(ids_to_show)]['id'])
     # Case not enough validated
     else:
         v_tags = list(validated_df['id'])  # took all validated
@@ -190,13 +185,13 @@ def _pick_tags_from_time_interval(df: DataFrame, df_user_ratings: DataFrame) -> 
         ids_to_show = v_tags + pot_tags
         if len(pot_tags) == not_val_not_vote.shape[0]:
             rest_ids = df[~df['id'].isin(ids_to_show)]
-            ids_to_show += rest_ids[:10 - len(ids_to_show)]['id']
+            ids_to_show += rest_ids[:total_tags - len(ids_to_show)]['id']
 
         else:
             df_len = not_val_not_vote[len(pot_tags):].shape[0]
             # pick random from tail
             ids_to_show += list(not_val_not_vote[len(pot_tags):].sample(n=min(random_tail_tags, df_len))['id'])
-            if len(ids_to_show) < 10:
+            if len(ids_to_show) < total_tags:
                 ids_to_show += list(df[~df['ids'].isin(ids_to_show)]['id'])
 
     # Mark all tags we decided to show with 1 the rest by default are 0

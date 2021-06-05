@@ -115,15 +115,15 @@ def create_comment(request):
                 messages.error(request, "You can't post more replys for this comment")
             elif not parent_id and not is_user_able_to_post_comment_on_tag(request.user, tag):
                 messages.error(request, "You can't post more comments for this tag")
-
-            comment = Comment(body=comment_body, tag=tag, video=tag.video,
-                              creator=request.user, creator_name=request.user.username)
-            if parent_id:
-                # reply comment
-                parent_comment = Comment.objects.get(id=parent_id)
-                comment.parent = parent_comment
-                comment.is_reply = True
-            comment.save()
+            else:
+                comment = Comment(body=comment_body, tag=tag, video=tag.video,
+                                  creator=request.user, creator_name=request.user.username)
+                if parent_id:
+                    # reply comment
+                    parent_comment = Comment.objects.get(id=parent_id)
+                    comment.parent = parent_comment
+                    comment.is_reply = True
+                comment.save()
 
         comments, status_code = get_serialized_comments_for_tag(tag)
         return JsonResponse({'comments_list': comments, 'tag_id': data['tag_id'], 'errors': json.dumps(errors)},
@@ -138,9 +138,6 @@ def delete_comment(request):
     if request.method == 'POST':
         tag = get_tag_by_id(request.POST['tag_id'])
         comment = get_comment_by_id(request.POST['comment_id'])
-        print(comment.creator_name)
-        print(request.user.username)
-        print(comment.body)
         if comment.creator.id == request.user.id:
             try:
                 comment.delete()

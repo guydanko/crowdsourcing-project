@@ -3,31 +3,19 @@ import youtube_transcript_api
 from django.db import models
 from django.contrib.postgres.fields import JSONField
 from embed_video.fields import EmbedVideoField
-from datetime import datetime as dt
-import datetime
 from django.contrib.auth.models import User
 from youtube_transcript_api import YouTubeTranscriptApi as yt
 import youtube_dl
 from .Utils import *
 
+# Configurations :
 sID = "t99ULJjCsaM"
 
-date = datetime.date(1, 1, 1)
-
+####--------GLOBALS---------####
 MAX_START_TO_END_RANGE = 20 * 60
 MIN_START_TO_END_RANGE = 5
 TAG_VALIDATION_THRESHOLD = 0.2
-
-
-def seconds_to_time(duration_in_seconds):
-    hours = duration_in_seconds // 3600
-    minutes = (duration_in_seconds % 3600) // 60
-    seconds = duration_in_seconds % 60
-    return datetime.time(hours, minutes, seconds)
-
-
-def time_to_seconds(time_object):
-    return time_object.hour * 3600 + time_object.minute * 60 + time_object.second
+####------------------------####
 
 
 class Video(models.Model):
@@ -109,6 +97,7 @@ class Tagging(models.Model):
         return f"Tagging description - {self.description}"
 
     def save(self, *args, **kwargs):
+        # Each saving, update the rating score and the total tag score, check if tag is validated or invalidated.
         self.rating_score = rating_score_calc(self.up_votes, self.down_votes)
         self.total_tag_score = calculate_total_rating_score_for_tag(self.rating_score, self.transcript_score)
         if is_tag_invalid(self.up_votes, self.down_votes):
@@ -117,6 +106,7 @@ class Tagging(models.Model):
             self.is_validated = True
         else:
             self.is_validated = False
+
         super().save(*args, **kwargs)
 
 
