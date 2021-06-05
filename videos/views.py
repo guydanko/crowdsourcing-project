@@ -112,9 +112,9 @@ def create_comment(request):
             parent_id = int(data['parent_id']) if 'parent_id' in data else None
             # Spamming validation
             if parent_id and not is_user_able_to_post_reply_on_comment(request.user, tag, parent_id):
-                messages.error(request, "You can't post more replys for this comment")
+                errors.append("You can't post more replies for this comment")
             elif not parent_id and not is_user_able_to_post_comment_on_tag(request.user, tag):
-                messages.error(request, "You can't post more comments for this tag")
+                errors.append("You can't post more comments for this tag")
             else:
                 comment = Comment(body=comment_body, tag=tag, video=tag.video,
                                   creator=request.user, creator_name=request.user.username)
