@@ -46,7 +46,7 @@ e) Running the project:
   ![Alt text](/celery.PNG?raw=true "celery runtime configuration")
   6) Click on the + icon 
   7) Select Compound and add both the 'Project' configuration and the 'celery' configuration.
-  ![Alt text](/django and celery.PNG?raw=true "django and celery compund runtime configuration")
+  ![Alt text](/django_and_celery.PNG?raw=true "django and celery compund runtime configuration")
   
 d) use the compound configuration to run the project.
   Enjoy! :)
