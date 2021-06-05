@@ -20,8 +20,8 @@ b) Clone the project and install requierments:
 
 
 c) Install RabbitMQ:
-  https://www.rabbitmq.com/install-windows.html#chocolatey
-  Direct download, follow instructions, you will be required to install Erlang so make sure to install it.
+  1. visit: https://www.rabbitmq.com/install-windows.html#chocolatey
+  2. Direct download, follow instructions, you will be required to install Erlang.
 
 d) Migrate db:
   1. run from terminal: python manage.py makemigrations 
@@ -33,7 +33,7 @@ d) Migrate db:
 	  - username : admin
 	  - email : admin@gmail.com
 	  - pass : admin
-	  hit y
+	  
     
     
 e) Running the project:
@@ -49,4 +49,5 @@ e) Running the project:
   ![Alt text](/django_and_celery.PNG?raw=true "django and celery compund runtime configuration")
   
 d) use the compound configuration to run the project.
-  Enjoy! :)
+
+Enjoy! :)
