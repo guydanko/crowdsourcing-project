@@ -81,7 +81,7 @@ class Tagging(models.Model):
     end_seconds = models.DecimalField(decimal_places=2, max_digits=10)
     date_subscribed = models.DateTimeField(default=dt.now())
     description = models.TextField(verbose_name="Subject description:", max_length=50)
-    transcript_score = models.FloatField()
+    transcript_score = models.FloatField(default=0)
 
     # like/dislike counters, and scores that are dynamically changed each save
     rating_value = models.IntegerField(default=0)

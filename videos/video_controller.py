@@ -2,7 +2,7 @@ from typing import List, Dict
 import pandas as pd
 from pandas import DataFrame
 from django.core import serializers
-from videos.tasks import get_transcript_score_async
+from videos.tasks import update_transcript_score_async
 from videos.tag_similarity import is_similar
 from .spammers import *
 
@@ -101,15 +101,18 @@ def create_tag(video, user, start_time, end_time, description):
             # if tag is similar to an existing tags, adds it as an invalid tag,
             # which will only be displayed to the creator
             tag = Tagging.objects.create(creator=user, start=start_time, start_seconds=start_seconds, end=end_time,
-                                         end_seconds=end_seconds, description=description, video=video,
-                                         transcript_score=0, is_invalid=True)
+                                         end_seconds=end_seconds, description=description, video=video, is_invalid=True)
             tag.save()
             return ['similar to an existing tag']
 
-    # tag passed all the validations and is ready to receive a transcript score
+    # tag passed all the validations and is ready to receive a transcript score.
+    # the tag will be saved and a valid tag with transcript score 0
+    # the transcript score will be updated when the model finishes calculating it
+    tag = Tagging.objects.create(creator=user, start=start_time, start_seconds=start_seconds, end=end_time,
+                                 end_seconds=end_seconds, description=description, video=video, is_invalid=False)
+    tag.save()
     # the function will run asynchronously, brokered by RabbitMQ and managed by Celery
-    get_transcript_score_async.delay(video.transcript, user.id, start_time, end_time, description, video.id,
-                                     start_seconds, end_seconds)
+    update_transcript_score_async.delay(video.transcript, description, start_seconds, end_seconds, tag.id)
 
 
 def create_user_rating(creator, tag, is_upvote):
