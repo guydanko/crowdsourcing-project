@@ -209,4 +209,5 @@ def get_transcript_score(transcript_json, start, end, users_tag_text):
     else:
         # 0.0 -> no matches for transcript
         final_score = score_avg
+    print(f"Final Score :{final_score}")
     return final_score

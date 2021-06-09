@@ -10,6 +10,10 @@ from django.views.decorators.csrf import csrf_exempt
 def video(request, identifier):
     """ Responsible for displaying a video page and receiving a tag request """
     video = get_video_by_id(video_id=identifier)
+    # TODO delete those lines after the 13.6 presentation
+    for t in Tagging.objects.filter(video=video):
+        t.save()
+    # till here
     tags = get_tags_for_video(video, request.user.id)
     user_tags = get_all_user_tags_for_video(user_id=request.user.id, video_id=identifier)
     show_all_tags = True

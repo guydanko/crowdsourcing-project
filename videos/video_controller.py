@@ -39,9 +39,15 @@ def get_tags_for_video_in_time_range(video, start_seconds) -> List[Tagging]:
 
 
 def get_all_user_tags_for_video(user_id, video_id) -> List[Tagging]:
-    return Tagging.objects.filter(creator__id=user_id, video_id=video_id).order_by('start__hour',
-                                                                                   'start__minute',
-                                                                                   'start__second')
+    up_voted_tags_for_vid = UserRating.objects.filter(creator__id=user_id, video_id=video_id, is_upvote=True)
+    tags_user_liked = [rating.tagging for rating in up_voted_tags_for_vid]
+    tags_created_by_user = Tagging.objects.filter(creator__id=user_id, video_id=video_id)
+    total_list = []
+    for tag in tags_created_by_user:
+        total_list.append(tag)
+    total_list += tags_user_liked
+    total_list.sort(key=lambda x: (x.start_seconds, -x.total_tag_score))
+    return total_list
 
 
 def get_all_ratings_for_tag(tagging) -> List[UserRating]:
@@ -147,7 +153,8 @@ def choose_which_tags_to_show(video, user_id: int) -> List[Tagging]:
     df = df.groupby(by='bucket').apply(_pick_tags_from_time_interval, df_user_ratings=df_user_ratings)
     # Step 3 - Take id's which has been decided to being showed up for the user
     tags_to_show = df[df['Show_Tag'] == 1]['id']
-    return Tagging.objects.filter(id__in=tags_to_show).order_by('start__hour', 'start__minute', 'start__second')
+    return Tagging.objects.filter(id__in=tags_to_show).order_by('start__hour', 'start__minute', 'start__second',
+                                                                '-total_tag_score')
 
 
 def _pick_tags_from_time_interval(df: DataFrame, df_user_ratings: DataFrame) -> DataFrame:
@@ -188,14 +195,14 @@ def _pick_tags_from_time_interval(df: DataFrame, df_user_ratings: DataFrame) -> 
         ids_to_show = v_tags + pot_tags
         if len(pot_tags) == not_val_not_vote.shape[0]:
             rest_ids = df[~df['id'].isin(ids_to_show)]
-            ids_to_show += rest_ids[:total_tags - len(ids_to_show)]['id']
+            ids_to_show += list(rest_ids[:total_tags - len(ids_to_show)]['id'])
 
         else:
             df_len = not_val_not_vote[len(pot_tags):].shape[0]
             # pick random from tail
             ids_to_show += list(not_val_not_vote[len(pot_tags):].sample(n=min(random_tail_tags, df_len))['id'])
             if len(ids_to_show) < total_tags:
-                ids_to_show += list(df[~df['ids'].isin(ids_to_show)]['id'])
+                ids_to_show += list(df[~df['id'].isin(ids_to_show)]['id'])
 
     # Mark all tags we decided to show with 1 the rest by default are 0
     df.loc[df['id'].isin(ids_to_show), 'Show_Tag'] = 1

@@ -13,8 +13,8 @@ sID = "t99ULJjCsaM"
 
 ####--------GLOBALS---------####
 MAX_START_TO_END_RANGE = 20 * 60
-MIN_START_TO_END_RANGE = 5
-TAG_VALIDATION_THRESHOLD = 0.2
+MIN_START_TO_END_RANGE = 20
+TAG_VALIDATION_THRESHOLD = 0.4
 ####------------------------####
 
 
@@ -80,7 +80,7 @@ class Tagging(models.Model):
     end = models.TimeField(verbose_name="End:")
     end_seconds = models.DecimalField(decimal_places=2, max_digits=10)
     date_subscribed = models.DateTimeField(default=dt.now())
-    description = models.TextField(verbose_name="Subject description:", max_length=50)
+    description = models.TextField(verbose_name="Subject description:", max_length=100)
     transcript_score = models.FloatField(default=0)
 
     # like/dislike counters, and scores that are dynamically changed each save

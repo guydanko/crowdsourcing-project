@@ -35,7 +35,7 @@ def compute_video_bucket_length(length_seconds: int) -> int:
         f(x) = x.length / log(x.length) / 2 so for example:
         video length of 60 minutes have buckets of size 506 seconds,
         video length of 15 minutes have buckets of size 152 seconds"""
-    bucket_length = round((float(length_seconds) / (math.log(length_seconds, 10) * 2)))
+    bucket_length = round((float(length_seconds) / (math.log(length_seconds, 10) * 1.5)))
     return max(bucket_length, MIN_INTERVAL_LENGTH)
 
 
