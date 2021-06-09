@@ -13,8 +13,9 @@ function updateTagCount(toClick, toDisable, counter, rating) {
     toDisable.classList.remove("active")
 }
 
-function sendVoteRequest(tagId, isUpvote, row) {
-    const cols = document.getElementById("row-" + row).getElementsByClassName("vote-bar")[0].getElementsByTagName("td")
+function sendVoteRequest(tagId, isUpvote, row, allTags) {
+    const table = allTags? "all-tags":"my-tags";
+    const cols = document.getElementById(table + "-row-" + row).getElementsByClassName("vote-bar")[0].getElementsByTagName("td")
     const toClick = isUpvote ? cols[cols.length - 3].getElementsByTagName("i")[0] : cols[cols.length - 2].getElementsByTagName("i")[0]
     const toDisable = isUpvote ? cols[cols.length - 2].getElementsByTagName("i")[0] : cols[cols.length - 3].getElementsByTagName("i")[0]
     const counter = cols[cols.length - 1]
@@ -81,12 +82,10 @@ var deleteTag = function (tagId) {
 
 document.getElementById("myTags").addEventListener("click", function () {
     if (!this.classList.contains("active")) {
-        console.log("here")
         document.getElementById("allTags").classList.remove('active')
-        document.getElementById("allTagBody").className = "inactive"
+        document.getElementById("allTagBody").className = "allTagBody inactive"
         this.classList.add("active")
-        document.getElementById("myTagBody").className = "active"
-        document.getElementById("id_showAllTags").value = "False"
+        document.getElementById("myTagBody").className = "myTagBody active"
     }
 
 });
@@ -94,10 +93,9 @@ document.getElementById("myTags").addEventListener("click", function () {
 document.getElementById("allTags").addEventListener("click", function () {
     if (!this.classList.contains("active")) {
         document.getElementById("myTags").classList.remove('active')
-        document.getElementById("myTagBody").className = "inactive"
+        document.getElementById("myTagBody").className = "myTagBody inactive"
         this.classList.add("active")
-        document.getElementById("allTagBody").className = "active"
-        document.getElementById("id_showAllTags").value = "True"
+        document.getElementById("allTagBody").className = "allTagBody active"
     }
 
 });

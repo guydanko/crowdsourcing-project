@@ -29,13 +29,13 @@ function onYouTubeIframeAPIReady() {
 
 function videoPlay(event) {
     if (event.data == YT.PlayerState.PLAYING) {
-        console.log("YouTube Video is PLAYING!!");
+
     }
     if (event.data == YT.PlayerState.PAUSED) {
-        console.log("YouTube Video is PAUSED!!");
+
     }
     if (event.data == YT.PlayerState.ENDED) {
-        console.log("YouTube Video is ENDING!!");
+
     }
 }
 

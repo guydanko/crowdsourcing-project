@@ -19,9 +19,9 @@
                         </div>
                     </div>
                     <div class="video-name">
-                    <h5>{{ obj.name }}</h5>
-                        </div>
-{#                    <span class="badge bg-secondary text-light">{{ obj.duration|time:'H:i:s' }}</span>#}
+                        <h5>{{ obj.name }}</h5>
+                    </div>
+                    {#                    <span class="badge bg-secondary text-light">{{ obj.duration|time:'H:i:s' }}</span>#}
                 </div>
 
                 <div class="container col-md-6 table-responsive">
@@ -48,12 +48,12 @@
 
                         </thead>
                         {% if show_all_tags == True %}
-                            <tbody id="allTagBody" class="active">
+                            <tbody id="allTagBody" class="allTagBody active">
                             {% else %}
-                            <tbody id="allTagBody" class="inactive">
+                            <tbody id="allTagBody" class="allTagBody inactive">
                         {% endif %}
                         {% for tag in tags %}
-                            <tr class="outer-row" id="row-{{ forloop.counter0 }}">
+                            <tr class="outer-row" id="all-tags-row-{{ forloop.counter0 }}">
                                 <td colspan="100%">
                                     <table class="table rounded" class="inner-table">
                                         <tbody>
@@ -67,7 +67,7 @@
                                                 {% if tag.creator.id == user.id %}
                                                     <div class="clickable delete-tag" onclick="deleteTag({{ tag.id }})">
                                                         <i class="fa fa-trash" aria-hidden="true"></i>
-{#                                                        </a>#}
+                                                        {#                                                        </a>#}
 
                                                     </div>
                                                 {% endif %}
@@ -92,17 +92,17 @@
 
                                             <td scope="col" colspan="10%" class="inner-td">
                                                 {% if tag.creator.id != user.id %}
-                                                    {% if ratings_for_user|index:forloop.counter0|equal:"True" %}
+                                                    {% if user_ratings_for_shown_tags|index:forloop.counter0|equal:"True" %}
                                                         <div class="clickable"
                                                              onclick="sendVoteRequest({{ tag.id }}, true,
-                                                                     {{ forloop.counter0 }})">
+                                                                     {{ forloop.counter0 }},true)">
                                                             <i class="fa fa-thumbs-up active"></i>
                                                         </div>
 
                                                     {% else %}
                                                         <div class="clickable"
                                                              onclick="sendVoteRequest({{ tag.id }}, true,
-                                                                     {{ forloop.counter0 }})">
+                                                                     {{ forloop.counter0 }},true)">
                                                             <i class="fa fa-thumbs-up"></i>
                                                         </div>
                                                     {% endif %}
@@ -110,16 +110,16 @@
                                             </td>
                                             <td scope="col" colspan="10%" class="inner-td">
                                                 {% if tag.creator.id != user.id %}
-                                                    {% if ratings_for_user|index:forloop.counter0|equal:"False" %}
+                                                    {% if user_ratings_for_shown_tags|index:forloop.counter0|equal:"False" %}
                                                         <div class="clickable"
                                                              onclick="sendVoteRequest({{ tag.id }}, false,
-                                                                     {{ forloop.counter0 }})">
+                                                                     {{ forloop.counter0 }},true)">
                                                             <i class="fa fa-thumbs-down active"></i>
                                                         </div>
                                                     {% else %}
                                                         <div class="clickable"
                                                              onclick="sendVoteRequest({{ tag.id }}, false,
-                                                                     {{ forloop.counter0 }})">
+                                                                     {{ forloop.counter0 }},true)">
                                                             <i class="fa fa-thumbs-down"></i>
                                                         </div>
                                                     {% endif %}
@@ -145,13 +145,13 @@
                         </tbody>
 
                         {% if show_all_tags == True %}
-                            <tbody id="myTagBody" class="inactive">
+                            <tbody id="myTagBody" class="myTagBody inactive">
                             {% else %}
-                            <tbody id="myTagBody" class="active">
+                            <tbody id="myTagBody" class="myTagBody active">
                         {% endif %}
 
                         {% for tag in user_tags %}
-                            <tr class="outer-row" id="row-{{ forloop.counter0 }}">
+                            <tr class="outer-row" id="my-tags-row-{{ forloop.counter0 }}">
                                 <td colspan="100%">
                                     <table class="table rounded" class="inner-table">
                                         <tbody>
@@ -165,7 +165,7 @@
                                                 {% if tag.creator.id == user.id %}
                                                     <div class="clickable delete-tag" onclick="deleteTag({{ tag.id }})">
                                                         <i class="fa fa-trash" aria-hidden="true"></i>
-                                                        </a>
+                                                        {#                                                        </a>#}
 
                                                     </div>
                                                 {% endif %}
@@ -189,19 +189,56 @@
                                                 by : {{ tag.creator }}</td>
 
                                             <td scope="col" colspan="10%" class="inner-td">
+                                                {% if tag.creator.id != user.id %}
+                                                    {% if user_ratings_for_favorite_tags|index:forloop.counter0|equal:"True" %}
+                                                        <div class="clickable"
+                                                             onclick="sendVoteRequest({{ tag.id }}, true,
+                                                                     {{ forloop.counter0 }},false)">
+                                                            <i class="fa fa-thumbs-up active"></i>
+                                                        </div>
+
+                                                    {% else %}
+                                                        <div class="clickable"
+                                                             onclick="sendVoteRequest({{ tag.id }}, true,
+                                                                     {{ forloop.counter0 }},false)">
+                                                            <i class="fa fa-thumbs-up"></i>
+                                                        </div>
+                                                    {% endif %}
+                                                {% endif %}
                                             </td>
                                             <td scope="col" colspan="10%" class="inner-td">
+                                                {% if tag.creator.id != user.id %}
+                                                    {% if user_ratings_for_favorite_tags|index:forloop.counter0|equal:"False" %}
+                                                        <div class="clickable"
+                                                             onclick="sendVoteRequest({{ tag.id }}, false,
+                                                                     {{ forloop.counter0 }},false)">
+                                                            <i class="fa fa-thumbs-down active"></i>
+                                                        </div>
+                                                    {% else %}
+                                                        <div class="clickable"
+                                                             onclick="sendVoteRequest({{ tag.id }}, false,
+                                                                     {{ forloop.counter0 }},false)">
+                                                            <i class="fa fa-thumbs-down"></i>
+                                                        </div>
+                                                    {% endif %}
+                                                {% endif %}
+
+
                                             </td>
                                             <td scope="col" colspan="10%"
                                                 class="inner-td counter"> {{ tag.rating_value }}</td>
                                         </tr>
                                         <tr class="inner-row">
+
+
                                         </tr>
                                         </tfoot>
                                     </table>
                                 </td>
                             </tr>
+
                         {% endfor %}
+
 
                         </tbody>
                     </table>
@@ -221,13 +258,15 @@
                         </div>
                     </div>
                     <div class="display-none" id="div_form_replay">
-                        <form name ="form-replies" id="form-replies" action="{% url 'videos:create_comment' %}" method="POST">
+                        <form name="form-replies" id="form-replies" action="{% url 'videos:create_comment' %}"
+                              method="POST">
                             {% csrf_token %}
                             <div class="input-group input-group-sm">
-                            <label htmlFor="body"></label>
-                            <input type="text" name="body" id="reply-body" class="form-control" required>
-                            <input type="button"  name="submit" value="Reply" onclick="create_reply(this.form)"  id="button_replay">
-                                </div>
+                                <label htmlFor="body"></label>
+                                <input type="text" name="body" id="reply-body" class="form-control" required>
+                                <input type="button" name="submit" value="Reply" onclick="create_reply(this.form)"
+                                       id="button_replay">
+                            </div>
 
                             <input type="hidden" name="tag_id" id="input_tag_id">
                             <input type="hidden" name="parent_id" id="parent_id">
@@ -243,7 +282,7 @@
                                     <input type="text" name="body" id="new-comment-body" class="form-control" required>
                                 </div>
                                 <input type="hidden" name="tag_id" id="input_id">
-                                <input type="submit" value="Create comment"  class="btn btn-primary">
+                                <input type="submit" value="Create comment" class="btn btn-primary">
                             </form>
                         </div>
                     </div>

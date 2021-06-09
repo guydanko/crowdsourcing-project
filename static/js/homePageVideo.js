@@ -1,6 +1,6 @@
 function appendNotFoundMessage() {
     document.getElementById("video-container").innerHTML =
-        "Sorry, no videos were found"
+        "No videos were found"
 }
 
 function get_video_html(video) {
@@ -39,12 +39,10 @@ function get_video_html(video) {
 
 function appendVideos(videos) {
 
-    console.log(typeof(videos))
-
     document.getElementById("video-container").innerHTML = "";
 
     videos.forEach(function (vid) {
-        console.log(vid)
+
         const col = document.createElement("div");
         col.className = "col-md-6 content-center"
         col.id = "video-column"
@@ -56,8 +54,6 @@ function appendVideos(videos) {
 function sendSearchRequest() {
 
     const searchTerm = document.getElementById("search-bar").value;
-
-    console.log("Search term is: " + searchTerm)
 
     $.ajax({
         url: '/videos/search/',

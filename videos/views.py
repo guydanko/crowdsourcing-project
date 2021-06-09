@@ -15,7 +15,6 @@ def video(request, identifier):
         t.save()
     # till here
     tags = get_tags_for_video(video, request.user.id)
-    user_tags = get_all_user_tags_for_video(user_id=request.user.id, video_id=identifier)
     show_all_tags = True
 
     if request.method == 'GET':
@@ -45,10 +44,12 @@ def video(request, identifier):
         else:
             messages.error(request, 'One of the values you have entered are Illegal, Please try again')
 
+    user_tags = get_all_user_tags_for_video(user_id=request.user.id, video_id=identifier)
     return render(request, 'videos/video.html',
                   {'obj': video, 'form': VideoTaggingForm(), 'tags': tags, 'user_tags': user_tags,
                    'show_all_tags': show_all_tags,
-                   'ratings_for_user': get_tags_active_for_user(request.user, tags)})
+                   'user_ratings_for_shown_tags': get_tags_active_for_user(request.user, tags),
+                   'user_ratings_for_favorite_tags': get_tags_active_for_user(request.user, user_tags)})
 
 
 def vote(request):
