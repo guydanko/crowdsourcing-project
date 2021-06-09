@@ -42,9 +42,7 @@ def get_all_user_tags_for_video(user_id, video_id) -> List[Tagging]:
     up_voted_tags_for_vid = UserRating.objects.filter(creator__id=user_id, video_id=video_id, is_upvote=True)
     tags_user_liked = [rating.tagging for rating in up_voted_tags_for_vid]
     tags_created_by_user = Tagging.objects.filter(creator__id=user_id, video_id=video_id)
-    total_list = []
-    for tag in tags_created_by_user:
-        total_list.append(tag)
+    total_list = [tag for tag in tags_created_by_user]
     total_list += tags_user_liked
     total_list.sort(key=lambda x: (x.start_seconds, -x.total_tag_score))
     return total_list
