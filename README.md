@@ -18,12 +18,18 @@ b) Clone the project and install requierments:
     - make sure it has installed and setup virtual enviroment properly
   4. Install requierments
 
+c) Download NLP model:
+  1. Go to https://drive.google.com/file/d/1ryE_NE_GYhmiXAuIwIUd1rMtD0bsbwuu/view?usp=sharing and download the 
+     universal-sentence-encoder_4.tar.gz
+  2. Move the file to the main project directory and right click on it.
+  3. Choose the 'Extract to universal-sentence-encoder_4/' option.
+  4. Make sure that a folder by the name 'universal-sentence-encoder_4' appears in your Project folder. 
 
-c) Install RabbitMQ:
+d) Install RabbitMQ:
   1. visit: https://www.rabbitmq.com/install-windows.html#chocolatey
   2. Direct download, follow instructions, you will be required to install Erlang.
 
-d) Migrate db:
+e) Migrate db:
   1. run from terminal: python manage.py makemigrations 
   2. run from terminal: python manage.py migrate
                     ** optional** 
@@ -36,7 +42,7 @@ d) Migrate db:
 	  
     
     
-e) Running the project:
+f) Running the project:
   1)	Open Edit configurations
   2)	Click on the + icon 
   3)  Select the "Django Server" option, name it 'Project' and click on apply.
@@ -48,6 +54,6 @@ e) Running the project:
   7) Select Compound and add both the 'Project' configuration and the 'celery' configuration.
   ![Alt text](/django_and_celery.PNG?raw=true "django and celery compund runtime configuration")
   
-d) use the compound configuration to run the project.
+g) use the compound configuration to run the project.
 
 Enjoy! :)
