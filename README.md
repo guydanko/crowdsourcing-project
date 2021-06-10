@@ -1,8 +1,10 @@
+#####################  TagV #####################
+
 NOTICE - this is a project installation guide for *Pycharm users on Windows*. 
 Some adaptations might be necessary if you are using a different OS\IDE.
 
-Project Instllation - please follow this teps:
 
+Project Instllation - please follow this teps:
 
 a) Install Postgres:
   1. Download postgres sql - When asked for superuser name and password enter:
